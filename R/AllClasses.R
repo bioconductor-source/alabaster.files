@@ -15,6 +15,9 @@ setClass("CompressedIndexedWrapper", contains=c("IndexedWrapper", "CompressedWra
 setClass("BamWrapper", contains="IndexedWrapper", slots=c(sorted="character"))
 
 #' @export
+setClass("BamIndexWrapper", contains="Wrapper")
+
+#' @export
 setClass("BedWrapper", contains="CompressedIndexedWrapper")
 
 #' @export
@@ -23,6 +26,9 @@ setClass("TabixWrapper", contains="Wrapper")
 setClass("FastaWrapper", contains="CompressedIndexedWrapper")
 
 setClass("FastqWrapper", contains="CompressedIndexedWrapper")
+
+#' @export
+setClass("FaidxWrapper", contains="Wrapper")
 
 setClass("VcfWrapper", contains="CompressedIndexedWrapper")
 

@@ -41,6 +41,36 @@ NULL
 #' @importFrom BiocGenerics path
 setMethod("path", "Wrapper", function(object) object@path)
 
+#' @export
+#' @importFrom S4Vectors coolcat metadata
+setMethod("show", "Wrapper", function(object) {
+    cat(class(object)[1], "object\n")
+    cat("path:", object@path, "\n")
+    coolcat("metadata(%i): %s", names(metadata(object)))
+})
+
+#' @importFrom alabaster.base .processMetadata
+save_wrapper <- function(x, dir, path, fname, index_class) {
+    dir.create(file.path(dir, path), showWarnings=FALSE, recursive=TRUE)
+
+    target <- paste0(path, "/", fname)
+    host <- file.path(dir, target)
+    transfer_file(x@path, host)
+
+    inner_meta <- list()
+    inner_meta$other_data <- .processMetadata(x, dir, path, "other") 
+    names(inner_meta) <- as.character(names(inner_meta)) # force object-ness.
+
+    list(inner = inner_meta, path = target)
+}
+
+#' @importFrom alabaster.base .restoreMetadata acquireFile
+load_wrapper <- function(path, inner_meta, project, constructor, ...) {
+    fpath <- acquireFile(project, path)
+    output <- constructor(fpath, ...)
+    .restoreMetadata(output, mcol.data=NULL, meta.data=inner_meta$other_data, project)
+}
+
 ########################
 ########################
 

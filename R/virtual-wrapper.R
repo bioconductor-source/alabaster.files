@@ -47,6 +47,85 @@ setMethod("path", "Wrapper", function(object) object@path)
 #' @export
 index <- function(x) x@index
 
+construct_with_index <- function(x, index, index_constructor) {
+    if (!is.null(index)) {
+        if (is.character(index)) {
+            index <- index_constructor(index)
+        }
+        x@index <- index
+    }
+    x
+}
+
+show_with_index <- function(x) {
+    if (length(x@index)) {
+        cat("index:", x@index[[1]]@path, "\n")
+    } else {
+        cat("index: <none>\n")
+    }
+}
+
+#' @importFrom alabaster.base .stageObject .writeMetadata
+stage_with_index <- function(x, dir, path, inner_meta, index_class) {
+    index <- x@index
+    if (!is.null(index)) {
+        if (!is(index, index_class)) {
+            stop("expected the index to be a '", index_class, "' instance")
+        }
+        imeta <- .stageObject(index, dir, paste0(path, "index"), child=TRUE)
+        inner_meta$index <- list(resource=.writeMetadata(imeta, dir))
+    }
+    inner_meta
+}
+
+#' @importFrom alabaster.base acquireMetadata .loadObject
+load_with_index <- function(inner_meta, project) {
+    index <- NULL
+    if ("index" %in% names(inner_meta)) {
+        imeta <- acquireMetadata(project, inner_meta$index$resource$path)
+        index <- .loadObject(imeta, project)
+    }
+    index
+}
+
+construct_indexed_wrapper <- function(path, index, wrapper_class, index_constructor, ...) {
+    x <- new(wrapper_class, path=path, ...)
+    construct_with_index(x, index, index_constructor=index_constructor)
+}
+
+#' @export
+#' @importFrom S4Vectors coolcat metadata
+setMethod("show", "IndexedWrapper", function(object) {
+    cat(class(object)[1], "object\n")
+    cat("path:", object@path, "\n")
+    show_with_index(object)
+    coolcat("metadata(%i): %s", names(metadata(object)))
+})
+
+#' @importFrom alabaster.base .processMetadata
+save_indexed_wrapper <- function(x, dir, path, fname, index_class) {
+    dir.create(file.path(dir, path), showWarnings=FALSE, recursive=TRUE)
+
+    target <- paste0(path, "/", fname)
+    host <- file.path(dir, target)
+    transfer_file(x@path, host)
+
+    inner_meta <- list()
+    inner_meta$other_data <- .processMetadata(x, dir, path, "other") 
+    inner_meta <- stage_with_index(x, dir, path, inner_meta=inner_meta, index_class=index_class)
+    names(inner_meta) <- as.character(names(inner_meta)) # force object-ness.
+
+    list(inner = inner_meta, path = target)
+}
+
+#' @importFrom alabaster.base .restoreMetadata acquireFile
+load_indexed_wrapper <- function(path, inner_meta, project, constructor) {
+    fpath <- acquireFile(project, path)
+    index <- load_with_index(inner_meta, project)
+    output <- constructor(fpath, compression=inner_meta$compression, index=index)
+    .restoreMetadata(output, mcol.data=NULL, meta.data=inner_meta$other_data, project)
+}
+
 ########################
 ########################
 
@@ -57,17 +136,8 @@ construct_compressed_indexed_wrapper <- function(path, compression, index, wrapp
     if (is.null(compression)) {
         compression <- guess_compression(path)
     }
-
     x <- new(wrapper_class, path=path, compression=compression, ...)
-
-    if (!is.null(index)) {
-        if (is.character(index)) {
-            index <- index_constructor(index)
-        }
-        x@index <- index
-    }
-
-    x
+    construct_with_index(x, index, index_constructor=index_constructor)
 }
 
 #' @export
@@ -76,17 +146,11 @@ setMethod("show", "CompressedIndexedWrapper", function(object) {
     cat(class(object)[1], "object\n")
     cat("path:", object@path, "\n")
     cat("compression:", object@compression, "\n")
-
-    if (length(object@index)) {
-        cat("index:", object@index[[1]]@path, "\n")
-    } else {
-        cat("index: <none>\n")
-    }
-
+    show_with_index(object)
     coolcat("metadata(%i): %s", names(metadata(object)))
 })
 
-#' @importFrom alabaster.base .stageObject stageObject .writeMetadata .processMetadata
+#' @importFrom alabaster.base .processMetadata
 save_compressed_indexed_wrapper <- function(x, dir, path, fname, index_class) {
     dir.create(file.path(dir, path), showWarnings=FALSE, recursive=TRUE)
 
@@ -96,29 +160,15 @@ save_compressed_indexed_wrapper <- function(x, dir, path, fname, index_class) {
 
     inner_meta <- list(compression = x@compression)
     inner_meta$other_data <- .processMetadata(x, dir, path, "other") 
-
-    index <- x@index
-    if (!is.null(index)) {
-        if (!is(index, index_class)) {
-            stop("expected the index to be a '", index_class, "' instance")
-        }
-        imeta <- .stageObject(index, dir, paste0(path, "index"), child=TRUE)
-        inner_meta$index <- list(resource=.writeMetadata(imeta, dir))
-    }
+    inner_meta <- stage_with_index(x, dir, path, inner_meta=inner_meta, index_class=index_class)
 
     list(inner = inner_meta, path = target)
 }
 
-#' @importFrom alabaster.base .restoreMetadata acquireMetadata acquireFile .loadObject
+#' @importFrom alabaster.base .restoreMetadata acquireFile 
 load_compressed_indexed_wrapper <- function(path, inner_meta, project, constructor) {
     fpath <- acquireFile(project, path)
-
-    index <- NULL
-    if ("index" %in% names(inner_meta)) {
-        imeta <- acquireMetadata(project, inner_meta$index$resource$path)
-        index <- .loadObject(imeta, project)
-    }
-
+    index <- load_with_index(inner_meta, project)
     output <- constructor(fpath, compression=inner_meta$compression, index=index)
     .restoreMetadata(output, mcol.data=NULL, meta.data=inner_meta$other_data, project)
 }

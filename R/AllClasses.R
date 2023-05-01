@@ -11,6 +11,7 @@ setClass("CompressedWrapper", contains=c("Wrapper", "VIRTUAL"), slots=c(compress
 #' @export
 setClass("CompressedIndexedWrapper", contains=c("IndexedWrapper", "CompressedWrapper", "VIRTUAL"))
 
+#' @export
 setClass("BamWrapper", contains="IndexedWrapper", slots=c(sorted="character"))
 
 #' @export

@@ -64,5 +64,5 @@ setMethod("stageObject", "FastqWrapper", function(x, dir, path, child=FALSE) {
 #' @export
 #' @importFrom alabaster.base .restoreMetadata acquireMetadata acquireFile .loadObject
 loadFastqWrapper <- function(meta, project) {
-    load_compressed_indexed_wrapper(meta$path, meta$fastq_file, project, constructor=function(...) FastqWrapper(..., encoding=meta$fastq_file$quality_encoding))
+    load_compressed_indexed_wrapper(meta$path, meta$fastq_file, project, constructor=FastqWrapper, encoding=meta$fastq_file$quality_encoding)
 }

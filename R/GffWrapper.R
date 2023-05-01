@@ -86,5 +86,5 @@ setMethod("show", "GffWrapper", function(object) {
 #' @export
 #' @importFrom alabaster.base .restoreMetadata acquireMetadata acquireFile .loadObject
 loadGffWrapper <- function(meta, project) {
-    load_compressed_indexed_wrapper(meta$path, meta$gff_file, project, constructor=function(...) GffWrapper(..., format=meta$gff_file$format))
+    load_compressed_indexed_wrapper(meta$path, meta$gff_file, project, constructor=GffWrapper, format=meta$gff_file$format)
 }

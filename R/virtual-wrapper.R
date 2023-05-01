@@ -119,10 +119,10 @@ save_indexed_wrapper <- function(x, dir, path, fname, index_class) {
 }
 
 #' @importFrom alabaster.base .restoreMetadata acquireFile
-load_indexed_wrapper <- function(path, inner_meta, project, constructor) {
+load_indexed_wrapper <- function(path, inner_meta, project, constructor, ...) {
     fpath <- acquireFile(project, path)
     index <- load_with_index(inner_meta, project)
-    output <- constructor(fpath, compression=inner_meta$compression, index=index)
+    output <- constructor(fpath, index=index, ...)
     .restoreMetadata(output, mcol.data=NULL, meta.data=inner_meta$other_data, project)
 }
 
@@ -166,10 +166,10 @@ save_compressed_indexed_wrapper <- function(x, dir, path, fname, index_class) {
 }
 
 #' @importFrom alabaster.base .restoreMetadata acquireFile 
-load_compressed_indexed_wrapper <- function(path, inner_meta, project, constructor) {
+load_compressed_indexed_wrapper <- function(path, inner_meta, project, constructor, ...) {
     fpath <- acquireFile(project, path)
     index <- load_with_index(inner_meta, project)
-    output <- constructor(fpath, compression=inner_meta$compression, index=index)
+    output <- constructor(fpath, compression=inner_meta$compression, index=index, ...)
     .restoreMetadata(output, mcol.data=NULL, meta.data=inner_meta$other_data, project)
 }
 

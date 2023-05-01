@@ -11,15 +11,18 @@ Description:
     and we support linkage between each file and its corresponding index.
 Imports:
     alabaster.schemas,
+    alabaster.base,
     methods,
     utils,
     S4Vectors,
+    BiocGenerics
 Suggests:
     BiocStyle,
     rmarkdown,
     knitr,
     testthat,
-    digest
+    digest,
+    rtracklayer
 VignetteBuilder: knitr
 RoxygenNote: 7.2.3
 biocViews:

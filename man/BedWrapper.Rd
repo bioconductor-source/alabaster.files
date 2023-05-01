@@ -3,10 +3,9 @@
 \docType{class}
 \name{BedWrapper}
 \alias{BedWrapper}
-\alias{loadBedWrapper}
 \alias{BedWrapper-class}
-\alias{show,BedWrapper-method}
 \alias{stageObject,BedWrapper-method}
+\alias{loadBedWrapper}
 \title{Wrapper for a BED file}
 \usage{
 BedWrapper(path, compression = NULL, index = NULL)
@@ -18,13 +17,19 @@ BedWrapper(path, compression = NULL, index = NULL)
 This should be one of \code{"none"}, \code{"gzip"}, \code{"bzip2"} or \code{"bgzip"}.
 If \code{NULL}, this is inferred from the file's headers and suffix.}
 
-\item{index}{String specifying the path to a tabix-formatted index file}
+\item{index}{String specifying the path to an index file in tabix format, or \code{NULL} if no index is available.
+If an index is supplied, the file should be bgzip-compressed.}
 }
 \value{
 A BedWrapper instance that can be used in \code{\link{stageObject}}.
 }
 \description{
 Wrap a BED file for saving and loading in the \pkg{alabaster} framework.
+}
+\details{
+The BedWrapper class is a subclass of a \linkS4class{CompressedIndexedWrapper},
+so all of the methods of the latter can also be used here,
+e.g., \code{path}, \code{index}, \code{compression}.
 }
 \examples{
 # Mocking up a BED file.

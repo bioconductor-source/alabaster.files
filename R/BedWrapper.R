@@ -6,8 +6,14 @@
 #' @param compression String specifying the compression.
 #' This should be one of \code{"none"}, \code{"gzip"}, \code{"bzip2"} or \code{"bgzip"}.
 #' If \code{NULL}, this is inferred from the file's headers and suffix.
-#' @param index String specifying the path to a tabix-formatted index file
+#' @param index String specifying the path to an index file in tabix format, or \code{NULL} if no index is available.
+#' If an index is supplied, the file should be bgzip-compressed.
 #'
+#' @details
+#' The BedWrapper class is a subclass of a \linkS4class{CompressedIndexedWrapper},
+#' so all of the methods of the latter can also be used here,
+#' e.g., \code{path}, \code{index}, \code{compression}.
+#' 
 #' @author Aaron Lun
 #'
 #' @return A BedWrapper instance that can be used in \code{\link{stageObject}}.
@@ -34,57 +40,22 @@
 #' 
 #' @docType class
 #' @aliases
-#' loadBedWrapper
 #' BedWrapper-class
-#' show,BedWrapper-method
 #' stageObject,BedWrapper-method
+#' loadBedWrapper
 #' @export
 BedWrapper <- function(path, compression=NULL, index=NULL) {
-    if (is.null(compression)) {
-        compression <- guess_compression(path)
-    }
-
-    x <- new("BedWrapper", path=path, compression=compression)
-
-    if (!is.null(index)) {
-        if (is.character(index)) {
-            index <- TabixWrapper(index)
-        }
-        x@index <- list(index)
-    }
-
-    x
+    construct_compressed_indexed_wrapper(path, compression=compression, index=index, wrapper_class="BedWrapper", index_constructor=TabixWrapper)
 }
-
-#' @export
-#' @importFrom S4Vectors coolcat metadata
-setMethod("show", "BedWrapper", function(object) {
-    cat("BedWrapper object\n")
-    cat("path:", object@path, "\n")
-    cat("compression:", object@compression, "\n")
-
-    if (length(object@index)) {
-        cat("index:", object@index[[1]]@path, "\n")
-    } else {
-        cat("index: (none)\n")
-    }
-
-    coolcat("metadata(%i): %s", names(metadata(object)))
-})
 
 #' @export
 #' @importFrom alabaster.base .stageObject stageObject .writeMetadata .processMetadata
 setMethod("stageObject", "BedWrapper", function(x, dir, path, child=FALSE) {
-    dir.create(file.path(dir, path), showWarnings=FALSE, recursive=TRUE)
-
-    target <- paste0(path, "/", "file.bed", compression_extension(x@compression))
-    host <- file.path(dir, target)
-    transfer_file(x@path, host)
-
+    info <- save_compressed_indexed_wrapper(x, dir, path, fname="file.bed", index_class="TabixWrapper")
     meta <- list(
         "$schema" = "bed_file/v1.json",
-        path = target,
-        bed_file = list(compression = x@compression)
+        path = info$path,
+        bed_file = info$inner
     )
 
     header <- readLines(x@path, n = 1L)
@@ -96,31 +67,11 @@ setMethod("stageObject", "BedWrapper", function(x, dir, path, child=FALSE) {
     }
     meta$bed_file$format <- format
 
-    index <- x@index
-    if (length(index)) {
-        if (!is(index[[1]], "TabixWrapper")) {
-            stop("BED file index should be a tabix file")
-        }
-        imeta <- .stageObject(index[[1]], dir, paste0(path, "index"), child=TRUE)
-        meta$bed_file$index <- list(resource=.writeMetadata(imeta, dir))
-    }
-
-    meta$bed_file$other_data <- .processMetadata(x, dir, path, "other") 
-
     meta
 })
 
 #' @export
 #' @importFrom alabaster.base .restoreMetadata acquireMetadata acquireFile .loadObject
 loadBedWrapper <- function(meta, project) {
-    fpath <- acquireFile(project, meta$path)
-
-    index <- NULL
-    if ("index" %in% names(meta$bed_file)) {
-        imeta <- acquireMetadata(project, meta$bed_file$index$resource$path)
-        index <- .loadObject(imeta, project)
-    }
-
-    output <- BedWrapper(fpath, compression=meta$bed_file$compression, index=index)
-    .restoreMetadata(output, mcol.data=NULL, meta.data=meta$bed_file$other_data, project)
+    load_compressed_indexed_wrapper(meta$path, meta$bed_file, project, constructor=BedWrapper)
 }

@@ -1,20 +1,35 @@
-setClass("BamWrapper", contains="Annotated", slots=c(path="character", sorted="character", index="list"))
-
 #' @export
 #' @importClassesFrom S4Vectors Annotated
-setClass("BedWrapper", contains="Annotated", slots=c(path="character", compression="character", index="list"))
+setClass("Wrapper", contains=c("Annotated", "VIRTUAL"), slots=c(path="character"))
 
-setClass("FastaWrapper", contains="Annotated", slots=c(path="character", compression="character", index="list"))
+#' @export
+setClass("IndexedWrapper", contains=c("Wrapper", "VIRTUAL"), slots=c(index="ANY"))
 
-setClass("FastqWrapper", contains="Annotated", slots=c(path="character", compression="character", index="list"))
+#' @export
+setClass("CompressedWrapper", contains=c("Wrapper", "VIRTUAL"), slots=c(compression="ANY"))
 
-setClass("VcfWrapper", contains="Annotated", slots=c(path="character", compression="character", index="list"))
+#' @export
+setClass("CompressedIndexedWrapper", contains=c("IndexedWrapper", "CompressedWrapper", "VIRTUAL"))
 
-setClass("GffWrapper", contains="Annotated", slots=c(path="character", compression="character", index="list"))
+setClass("BamWrapper", contains="IndexedWrapper", slots=c(sorted="character"))
 
-setClass("GmtWrapper", contains="Annotated", slots=c(path="character", compression="character", index="list"))
+#' @export
+setClass("BedWrapper", contains="CompressedIndexedWrapper")
 
-setClass("BigWigWrapper", contains="Annotated", slots=c(path="character"))
+#' @export
+setClass("TabixWrapper", contains="Wrapper")
 
-setClass("BigBedWrapper", contains="Annotated", slots=c(path="character"))
+setClass("FastaWrapper", contains="CompressedIndexedWrapper")
+
+setClass("FastqWrapper", contains="CompressedIndexedWrapper")
+
+setClass("VcfWrapper", contains="CompressedIndexedWrapper")
+
+setClass("GffWrapper", contains="CompressedIndexedWrapper", slots=c(format="character"))
+
+setClass("GmtWrapper", contains="Wrapper", slots=c(compression="character"))
+
+setClass("BigWigWrapper", contains="Wrapper")
+
+setClass("BigBedWrapper", contains="Wrapper")
 

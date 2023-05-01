@@ -28,7 +28,8 @@ setClass("VcfWrapper", contains="CompressedIndexedWrapper")
 
 setClass("GffWrapper", contains="CompressedIndexedWrapper", slots=c(format="character"))
 
-setClass("GmtWrapper", contains="Wrapper", slots=c(compression="character"))
+#' @export
+setClass("GmtWrapper", contains="CompressedWrapper")
 
 setClass("BigWigWrapper", contains="Wrapper")
 

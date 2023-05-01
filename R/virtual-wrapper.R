@@ -172,3 +172,44 @@ load_compressed_indexed_wrapper <- function(path, inner_meta, project, construct
     output <- constructor(fpath, compression=inner_meta$compression, index=index)
     .restoreMetadata(output, mcol.data=NULL, meta.data=inner_meta$other_data, project)
 }
+
+########################
+########################
+
+construct_compressed_wrapper <- function(path, compression, wrapper_class, ...) {
+    if (is.null(compression)) {
+        compression <- guess_compression(path)
+    }
+    new(wrapper_class, path=path, compression=compression, ...)
+}
+
+#' @export
+#' @importFrom S4Vectors coolcat metadata
+setMethod("show", "CompressedWrapper", function(object) {
+    cat(class(object)[1], "object\n")
+    cat("path:", object@path, "\n")
+    cat("compression:", object@compression, "\n")
+    coolcat("metadata(%i): %s", names(metadata(object)))
+})
+
+#' @importFrom alabaster.base .processMetadata
+save_compressed_wrapper <- function(x, dir, path, fname, index_class) {
+    dir.create(file.path(dir, path), showWarnings=FALSE, recursive=TRUE)
+
+    target <- paste0(path, "/", fname, compression_extension(x@compression))
+    host <- file.path(dir, target)
+    transfer_file(x@path, host)
+
+    inner_meta <- list(compression = x@compression)
+    inner_meta$other_data <- .processMetadata(x, dir, path, "other") 
+
+    list(inner = inner_meta, path = target)
+}
+
+#' @importFrom alabaster.base .restoreMetadata acquireFile 
+load_compressed_wrapper <- function(path, inner_meta, project, constructor, ...) {
+    fpath <- acquireFile(project, path)
+    output <- constructor(fpath, compression=inner_meta$compression, ...)
+    .restoreMetadata(output, mcol.data=NULL, meta.data=inner_meta$other_data, project)
+}
+

@@ -52,7 +52,7 @@ FastaWrapper <- function(path, sequence.type="DNA", compression=NULL, index=NULL
         compression=compression, 
         index=index, 
         wrapper_class="FastaWrapper", 
-        index_constructor=FaidxWrapper,
+        index_constructor=FaIndexWrapper,
         sequence.type=sequence.type
     )
 }
@@ -71,7 +71,7 @@ fa_validator <- function(x) {
 setMethod("stageObject", "FastaWrapper", function(x, dir, path, child=FALSE) {
     fa_validator(x)(x@path, format="fasta", nrec=10) # reading the first few records to validate them.
 
-    info <- save_compressed_indexed_wrapper(x, dir, path, fname="file.fa", index_class="FaidxWrapper", type=x@sequence.type)
+    info <- save_compressed_indexed_wrapper(x, dir, path, fname="file.fa", index_class="FaIndexWrapper", type=x@sequence.type)
     list(
         "$schema" = "fasta_file/v1.json",
         path = info$path,

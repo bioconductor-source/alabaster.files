@@ -53,7 +53,7 @@ FastqWrapper <- function(path, encoding, sequence.type="DNA", compression=NULL, 
         compression=compression, 
         index=index, 
         wrapper_class="FastqWrapper", 
-        index_constructor=FaidxWrapper,
+        index_constructor=FaIndexWrapper,
         sequence.type=sequence.type,
         encoding=encoding
     )
@@ -64,7 +64,7 @@ FastqWrapper <- function(path, encoding, sequence.type="DNA", compression=NULL, 
 setMethod("stageObject", "FastqWrapper", function(x, dir, path, child=FALSE) {
     fa_validator(x)(x@path, format="fastq", nrec=10, with.qualities=TRUE) # reading the first few records to validate them.
 
-    info <- save_compressed_indexed_wrapper(x, dir, path, fname="file.fastq", index_class="FaidxWrapper", type=x@sequence.type, quality_encoding=x@encoding)
+    info <- save_compressed_indexed_wrapper(x, dir, path, fname="file.fastq", index_class="FaIndexWrapper", type=x@sequence.type, quality_encoding=x@encoding)
     list(
         "$schema" = "fastq_file/v1.json",
         path = info$path,

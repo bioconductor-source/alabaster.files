@@ -5,22 +5,22 @@
 #' @param path String containing the path to a Tabix file.
 #'
 #' @details
-#' The TabixWrapper class is a subclass of a \linkS4class{Wrapper},
+#' The TabixIndexWrapper class is a subclass of a \linkS4class{Wrapper},
 #' so all of the methods of the latter can also be used here, e.g., \code{path}.
 #' 
 #' @author Aaron Lun
 #'
-#' @return A TabixWrapper instance that can be used in \code{\link{stageObject}}.
+#' @return A TabixIndexWrapper instance that can be used in \code{\link{stageObject}}.
 #'
 #' @examples
 #' # Mocking up a Tabix file.
 #' test_tbx <- system.file("extdata", "example.gtf.gz.tbi", package="Rsamtools")
 #'
-#' # Creating a TabixWrapper.
-#' wrapped <- TabixWrapper(test_tbx)
+#' # Creating a TabixIndexWrapper.
+#' wrapped <- TabixIndexWrapper(test_tbx)
 #' wrapped
 #'
-#' # Staging the TabixWrapper.
+#' # Staging the TabixIndexWrapper.
 #' dir <- tempfile()
 #' library(alabaster.base)
 #' info <- stageObject(wrapped, dir, "tab")
@@ -33,25 +33,25 @@
 #' 
 #' @docType class
 #' @aliases
-#' TabixWrapper-class
-#' stageObject,TabixWrapper-method
-#' loadTabixWrapper
+#' TabixIndexWrapper-class
+#' stageObject,TabixIndexWrapper-method
+#' loadTabixIndexWrapper
 #' @export
-TabixWrapper <- function(path) {
-    new("TabixWrapper", path=path)
+TabixIndexWrapper <- function(path) {
+    new("TabixIndexWrapper", path=path)
 }
 
 #' @export
-setMethod("stageObject", "TabixWrapper", function(x, dir, path, child=FALSE, parent="file") {
+setMethod("stageObject", "TabixIndexWrapper", function(x, dir, path, child=FALSE, parent="file") {
     info <- save_wrapper(x, dir, path, fname=paste0(parent, ".tbi"))
     list(
-        "$schema" = "tabix_file/v1.json",
+        "$schema" = "tabix_index_file/v1.json",
         path = info$path,
-        tabix_file = info$inner
+        tabix_index_file = info$inner
     )
 })
 
 #' @export
-loadTabixWrapper <- function(meta, project) {
-    load_wrapper(meta$path, meta$tabix_file, project, constructor=TabixWrapper)
+loadTabixIndexWrapper <- function(meta, project) {
+    load_wrapper(meta$path, meta$tabix_index_file, project, constructor=TabixIndexWrapper)
 }

@@ -21,14 +21,14 @@ setClass("BamIndexWrapper", contains="Wrapper")
 setClass("BedWrapper", contains="CompressedIndexedWrapper")
 
 #' @export
-setClass("TabixWrapper", contains="Wrapper")
+setClass("TabixIndexWrapper", contains="Wrapper")
 
 setClass("FastaWrapper", contains="CompressedIndexedWrapper", slots=c(sequence.type="character"))
 
 setClass("FastqWrapper", contains="CompressedIndexedWrapper", slots=c(sequence.type="character", encoding="character"))
 
 #' @export
-setClass("FaidxWrapper", contains="Wrapper")
+setClass("FaIndexWrapper", contains="Wrapper")
 
 setClass("VcfWrapper", contains="CompressedIndexedWrapper")
 

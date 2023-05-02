@@ -47,7 +47,7 @@
 #' loadBedWrapper
 #' @export
 BedWrapper <- function(path, compression=NULL, index=NULL) {
-    construct_compressed_indexed_wrapper(path, compression=compression, index=index, wrapper_class="BedWrapper", index_constructor=TabixWrapper)
+    construct_compressed_indexed_wrapper(path, compression=compression, index=index, wrapper_class="BedWrapper", index_constructor=TabixIndexWrapper)
 }
 
 #' @export
@@ -69,7 +69,7 @@ setMethod("stageObject", "BedWrapper", function(x, dir, path, child=FALSE, valid
     validator <- if (format=="BED") import.bed else import.bed15
     validator(con)
 
-    info <- save_compressed_indexed_wrapper(x, dir, path, fname="file.bed", index_class="TabixWrapper")
+    info <- save_compressed_indexed_wrapper(x, dir, path, fname="file.bed", index_class="TabixIndexWrapper")
     meta <- list(
         "$schema" = "bed_file/v1.json",
         path = info$path,

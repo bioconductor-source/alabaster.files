@@ -59,7 +59,7 @@ GffWrapper <- function(path, compression=NULL, index=NULL, format=NULL) {
             stop("cannot automatically determine GFF format from file extension")
         }
     }
-    construct_compressed_indexed_wrapper(path, compression=compression, index=index, wrapper_class="GffWrapper", index_constructor=TabixWrapper, format=format)
+    construct_compressed_indexed_wrapper(path, compression=compression, index=index, wrapper_class="GffWrapper", index_constructor=TabixIndexWrapper, format=format)
 }
 
 ext.pattern <- "\\.%s(\\.bz2|\\.gz|\\.bgz)?$"
@@ -80,7 +80,7 @@ setMethod("stageObject", "GffWrapper", function(x, dir, path, child=FALSE) {
     validator <- if (x@format=="GFF3") import.gff3 else import.gff2
     validator(tmp)
 
-    info <- save_compressed_indexed_wrapper(x, dir, path, fname=paste0("file.", ext), index_class="TabixWrapper")
+    info <- save_compressed_indexed_wrapper(x, dir, path, fname=paste0("file.", ext), index_class="TabixIndexWrapper")
 
     meta <- list(
         "$schema" = "gff_file/v1.json",

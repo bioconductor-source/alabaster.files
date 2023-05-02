@@ -11,6 +11,9 @@
 #' The GmtWrapper class is a subclass of a \linkS4class{CompressedWrapper},
 #' so all of the methods of the latter can also be used here, e.g., \code{path}, \code{compression}.
 #' 
+#' The \code{stageObject} method for GmtWrapper classes will check the GMT file by reading the first few lines 
+#' and checking that each line contains at least three tab-separated fields.
+#'
 #' @author Aaron Lun
 #'
 #' @return A GmtWrapper instance that can be used in \code{\link{stageObject}}.
@@ -47,6 +50,11 @@ GmtWrapper <- function(path, compression=NULL) {
 
 #' @export
 setMethod("stageObject", "GmtWrapper", function(x, dir, path, child=FALSE) {
+    top.lines <- read_first_few_lines(x@path, compression=x@compression)
+    if (!all(lengths(strsplit(top.lines, "\t")) >= 3)) {
+        stop("expected at least three tab-separated fields in each line of a GMT file")
+    }
+
     info <- save_compressed_wrapper(x, dir, path, fname="file.gmt")
     list(
         "$schema" = "gmt_file/v1.json",

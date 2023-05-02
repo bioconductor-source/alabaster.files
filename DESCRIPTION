@@ -1,5 +1,5 @@
 Package: alabaster.files
-Title: Wrapper to Annotate Common File Formats
+Title: Wrappers to Save Common File Formats
 Version: 0.99.0
 Date: 2023-05-01
 Authors@R: person("Aaron", "Lun", role=c("aut", "cre"), email="infinite.monkeys.with.keyboards@gmail.com")
@@ -9,21 +9,23 @@ Description:
     This includes BAM, BED, VCF, bigWig, bigBed, FASTQ, FASTA and so on.
     We save and load additional metadata for each file,
     and we support linkage between each file and its corresponding index.
+Depends:
+    alabaster.base,
 Imports:
     alabaster.schemas,
-    alabaster.base,
     methods,
     utils,
     S4Vectors,
-    BiocGenerics
+    BiocGenerics,
+    rtracklayer,
+    Rsamtools,
+    Biostrings
 Suggests:
     BiocStyle,
     rmarkdown,
     knitr,
     testthat,
     digest,
-    rtracklayer,
-    Rsamtools,
     Biostrings,
     ShortRead
 VignetteBuilder: knitr

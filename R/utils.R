@@ -56,3 +56,36 @@ transfer_file <- function(src, dest) {
         }
     }
 }
+
+read_first_few_lines <- function(x, compression, n=10, comment="") {
+    handle <- switch(compression,
+        none=file(x),
+        bzip2=bzfile(x),
+        gzip=gzfile(x),
+        bgzip=gzfile(x)
+    )
+
+    if (comment == "") {
+        return(readLines(handle, n=n))
+    }
+
+    # Keep on going until we collect enough non-comment lines. The comments are
+    # still returned, but we want to make sure that we have at least some non-comment lines.
+    collected <- list()
+    non.comments <- 0L
+    repeat {
+        current <- readLines(handle, n=n)
+        collected[[length(collected) + 1]] <- current
+        non.comments <- non.comments + sum(!startsWith(current, comment))
+        if (length(current) < n || non.comments >= n) {
+            break;
+        }
+    }
+
+    unlist(collected)
+}
+
+parse_magic_number <- function(bytes) {
+    sum(as.double(bytes) * 256^(seq_along(bytes)-1))
+}
+

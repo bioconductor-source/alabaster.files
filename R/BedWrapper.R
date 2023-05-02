@@ -11,8 +11,10 @@
 #'
 #' @details
 #' The BedWrapper class is a subclass of a \linkS4class{CompressedIndexedWrapper},
-#' so all of the methods of the latter can also be used here,
-#' e.g., \code{path}, \code{index}, \code{compression}.
+#' so all of the methods of the latter can also be used here, e.g., \code{path}, \code{index}, \code{compression}.
+#'
+#' The \code{stageObject} method for BedWrapper classes will check the BED file by reading the first few lines 
+#' and attempting to import it into a GRanges via \code{\link{import.bed}} or \code{\link{import.bed15}}.
 #' 
 #' @author Aaron Lun
 #'
@@ -50,7 +52,23 @@ BedWrapper <- function(path, compression=NULL, index=NULL) {
 
 #' @export
 #' @importFrom alabaster.base .stageObject stageObject .writeMetadata .processMetadata
-setMethod("stageObject", "BedWrapper", function(x, dir, path, child=FALSE) {
+#' @importFrom rtracklayer import.bed import.bed15
+setMethod("stageObject", "BedWrapper", function(x, dir, path, child=FALSE, validate=TRUE) {
+    top.lines <- read_first_few_lines(x@path, compression=x@compression)
+
+    format <- 'BED'
+    header <- top.lines[1]
+    if (length(header)) {
+        if (length(strsplit(header, "\t")[[1]]) == 15) {
+            format <- 'BED15'
+        }
+    }
+
+    # Checking that the importer runs without error.
+    con <- textConnection(top.lines)
+    validator <- if (format=="BED") import.bed else import.bed15
+    validator(con)
+
     info <- save_compressed_indexed_wrapper(x, dir, path, fname="file.bed", index_class="TabixWrapper")
     meta <- list(
         "$schema" = "bed_file/v1.json",
@@ -58,13 +76,6 @@ setMethod("stageObject", "BedWrapper", function(x, dir, path, child=FALSE) {
         bed_file = info$inner
     )
 
-    header <- readLines(x@path, n = 1L)
-    format <- 'BED'
-    if (length(header)) {
-        if (length(strsplit(header, "\t")[[1]]) == 15) {
-            format <- 'BED15'
-        }
-    }
     meta$bed_file$format <- format
 
     meta

@@ -28,8 +28,10 @@ Wrap a BED file for saving and loading in the \pkg{alabaster} framework.
 }
 \details{
 The BedWrapper class is a subclass of a \linkS4class{CompressedIndexedWrapper},
-so all of the methods of the latter can also be used here,
-e.g., \code{path}, \code{index}, \code{compression}.
+so all of the methods of the latter can also be used here, e.g., \code{path}, \code{index}, \code{compression}.
+
+The \code{stageObject} method for BedWrapper classes will check the BED file by reading the first few lines 
+and attempting to import it into a GRanges via \code{\link{import.bed}} or \code{\link{import.bed15}}.
 }
 \examples{
 # Mocking up a BED file.

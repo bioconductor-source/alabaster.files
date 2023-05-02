@@ -9,6 +9,8 @@
 #' The BamWrapper class is a subclass of a \linkS4class{IndexedWrapper},
 #' so all of the methods of the latter can also be used here, e.g., \code{path}, \code{index}.
 #' 
+#' The \code{stageObject} method for BamWrapper classes will check the BAM file by scanning the header with \code{\link{scanBamHeader}}.
+#' 
 #' @author Aaron Lun
 #'
 #' @return A BamWrapper instance that can be used in \code{\link{stageObject}}.
@@ -43,7 +45,10 @@ BamWrapper <- function(path, index=NULL) {
 }
 
 #' @export
+#' @importFrom Rsamtools scanBamHeader
 setMethod("stageObject", "BamWrapper", function(x, dir, path, child=FALSE) {
+    scanBamHeader(x@path) # validating it by scanning the header.
+
     info <- save_indexed_wrapper(x, dir, path, fname="file.bam", index_class="BamIndexWrapper")
     list(
         "$schema" = "bam_file/v1.json",

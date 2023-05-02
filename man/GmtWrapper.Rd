@@ -26,6 +26,9 @@ Wrap a GMT file for saving and loading in the \pkg{alabaster} framework.
 \details{
 The GmtWrapper class is a subclass of a \linkS4class{CompressedWrapper},
 so all of the methods of the latter can also be used here, e.g., \code{path}, \code{compression}.
+
+The \code{stageObject} method for GmtWrapper classes will check the GMT file by reading the first few lines 
+and checking that each line contains at least three tab-separated fields.
 }
 \examples{
 # Mocking up a GMT file.

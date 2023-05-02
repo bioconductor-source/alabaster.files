@@ -14,9 +14,11 @@
 #'
 #' @details
 #' The GffWrapper class is a subclass of a \linkS4class{CompressedIndexedWrapper},
-#' so all of the methods of the latter can also be used here,
-#' e.g., \code{path}, \code{index}, \code{compression}.
+#' so all of the methods of the latter can also be used here, e.g., \code{path}, \code{index}, \code{compression}.
 #' 
+#' The \code{stageObject} method for GffWrapper classes will check the GFF file by reading the first few lines 
+#' and attempting to import it into a GRanges via \code{\link{import.gff2}} or \code{\link{import.gff3}}.
+#'
 #' @author Aaron Lun
 #'
 #' @return A GffWrapper instance that can be used in \code{\link{stageObject}}.
@@ -66,8 +68,18 @@ gff3.pattern <- sprintf(ext.pattern, "gff3")
 
 #' @export
 #' @importFrom alabaster.base .stageObject stageObject .writeMetadata .processMetadata
+#' @importFrom rtracklayer import.gff2 import.gff3
 setMethod("stageObject", "GffWrapper", function(x, dir, path, child=FALSE) {
     ext <- if (x@format == "GFF2") "gff2" else "gff3"
+
+    # Checking that the importer runs without error.
+    top.lines <- read_first_few_lines(x@path, compression=x@compression, comment="#")
+    tmp <- tempfile()
+    write(top.lines, file=tmp) # textConnection doesn't work as import.gff requires a seekable connection.
+    on.exit(unlink(tmp))
+    validator <- if (x@format=="GFF3") import.gff3 else import.gff2
+    validator(tmp)
+
     info <- save_compressed_indexed_wrapper(x, dir, path, fname=paste0("file.", ext), index_class="TabixWrapper")
 
     meta <- list(

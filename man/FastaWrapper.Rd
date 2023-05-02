@@ -28,12 +28,14 @@ Wrap a FASTA file for saving and loading in the \pkg{alabaster} framework.
 }
 \details{
 The FastaWrapper class is a subclass of a \linkS4class{CompressedIndexedWrapper},
-so all of the methods of the latter can also be used here,
-e.g., \code{path}, \code{index}, \code{compression}.
+so all of the methods of the latter can also be used here, e.g., \code{path}, \code{index}, \code{compression}.
+
+The \code{stageObject} method for FastaWrapper classes will check the FASTA file by reading the first few lines 
+and attempting to import it into an \linkS4class{XStringSet} object using the relevant \pkg{Biostrings} functions, e.g., \code{\link{readDNAStringSet}}.
 }
 \examples{
 # Mocking up a FASTA file.
-tmp <- file.path(fileext=".fa")
+tmp <- tempfile(fileext=".fa")
 write(">FOOBAR\nacgtacgt", tmp)
 
 # Creating a FastaWrapper.

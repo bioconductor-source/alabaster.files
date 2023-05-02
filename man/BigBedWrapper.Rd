@@ -22,6 +22,9 @@ Wrap a bigBed file for saving and loading in the \pkg{alabaster} framework.
 \details{
 The BigBedWrapper class is a subclass of a \linkS4class{Wrapper},
 so all of the methods of the latter can also be used here, e.g., \code{path}.
+
+The \code{stageObject} method for BigBedWrapper classes will check the bigBed file by searching for the bigBed magic number,
+i.e., 0x8789F2EB or its byte-reversed form.
 }
 \examples{
 # Mocking up a bigBed file.

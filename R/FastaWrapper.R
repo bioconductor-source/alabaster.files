@@ -11,8 +11,10 @@
 #'
 #' @details
 #' The FastaWrapper class is a subclass of a \linkS4class{CompressedIndexedWrapper},
-#' so all of the methods of the latter can also be used here,
-#' e.g., \code{path}, \code{index}, \code{compression}.
+#' so all of the methods of the latter can also be used here, e.g., \code{path}, \code{index}, \code{compression}.
+#'
+#' The \code{stageObject} method for FastaWrapper classes will check the FASTA file by reading the first few lines 
+#' and attempting to import it into an \linkS4class{XStringSet} object using the relevant \pkg{Biostrings} functions, e.g., \code{\link{readDNAStringSet}}.
 #' 
 #' @author Aaron Lun
 #'
@@ -20,7 +22,7 @@
 #'
 #' @examples
 #' # Mocking up a FASTA file.
-#' tmp <- file.path(fileext=".fa")
+#' tmp <- tempfile(fileext=".fa")
 #' write(">FOOBAR\nacgtacgt", tmp)
 #'
 #' # Creating a FastaWrapper.
@@ -55,9 +57,20 @@ FastaWrapper <- function(path, sequence.type="DNA", compression=NULL, index=NULL
     )
 }
 
+#' @importFrom Biostrings readAAStringSet readRNAStringSet readDNAStringSet
+fa_validator <- function(x) {
+    switch(x@sequence.type, 
+        DNA=readDNAStringSet,
+        RNA=readRNAStringSet,
+        AA=readAAStringSet
+    )
+}
+
 #' @export
 #' @importFrom alabaster.base .stageObject stageObject .writeMetadata .processMetadata
 setMethod("stageObject", "FastaWrapper", function(x, dir, path, child=FALSE) {
+    fa_validator(x)(x@path, format="fasta", nrec=10) # reading the first few records to validate them.
+
     info <- save_compressed_indexed_wrapper(x, dir, path, fname="file.fa", index_class="FaidxWrapper", type=x@sequence.type)
     list(
         "$schema" = "fasta_file/v1.json",

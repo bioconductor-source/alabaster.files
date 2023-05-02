@@ -13,16 +13,18 @@
 #'
 #' @details
 #' The FastqWrapper class is a subclass of a \linkS4class{CompressedIndexedWrapper},
-#' so all of the methods of the latter can also be used here,
-#' e.g., \code{path}, \code{index}, \code{compression}.
+#' so all of the methods of the latter can also be used here, e.g., \code{path}, \code{index}, \code{compression}.
 #' 
+#' The \code{stageObject} method for FastqWrapper classes will check the FASTQ file by reading the first few lines 
+#' and attempting to import it into an \linkS4class{XStringSet} object using the relevant \pkg{Biostrings} functions, e.g., \code{\link{readDNAStringSet}}.
+#'
 #' @author Aaron Lun
 #'
 #' @return A FastqWrapper instance that can be used in \code{\link{stageObject}}.
 #'
 #' @examples
 #' # Mocking up a FASTQ file.
-#' tmp <- file.path(fileext=".fa")
+#' tmp <- tempfile(fileext=".fq")
 #' write("@FOOBAR\nacgtacgt\n+134987382", tmp)
 #'
 #' # Creating a FastqWrapper.
@@ -60,6 +62,8 @@ FastqWrapper <- function(path, encoding, sequence.type="DNA", compression=NULL, 
 #' @export
 #' @importFrom alabaster.base .stageObject stageObject .writeMetadata .processMetadata
 setMethod("stageObject", "FastqWrapper", function(x, dir, path, child=FALSE) {
+    fa_validator(x)(x@path, format="fastq", nrec=10, with.qualities=TRUE) # reading the first few records to validate them.
+
     info <- save_compressed_indexed_wrapper(x, dir, path, fname="file.fastq", index_class="FaidxWrapper", type=x@sequence.type, quality_encoding=x@encoding)
     list(
         "$schema" = "fastq_file/v1.json",

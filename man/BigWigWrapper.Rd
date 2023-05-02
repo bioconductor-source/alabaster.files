@@ -22,6 +22,9 @@ Wrap a bigWig file for saving and loading in the \pkg{alabaster} framework.
 \details{
 The BigWigWrapper class is a subclass of a \linkS4class{Wrapper},
 so all of the methods of the latter can also be used here, e.g., \code{path}.
+
+The \code{stageObject} method for BigWigWrapper classes will check the bigWig file by searching for the bigWig magic number,
+i.e., 0x888FFC26 or its byte-reversed form.
 }
 \examples{
 # Mocking up a bigWig file.

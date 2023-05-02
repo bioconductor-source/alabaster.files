@@ -37,12 +37,14 @@ Wrap a FASTQ file for saving and loading in the \pkg{alabaster} framework.
 }
 \details{
 The FastqWrapper class is a subclass of a \linkS4class{CompressedIndexedWrapper},
-so all of the methods of the latter can also be used here,
-e.g., \code{path}, \code{index}, \code{compression}.
+so all of the methods of the latter can also be used here, e.g., \code{path}, \code{index}, \code{compression}.
+
+The \code{stageObject} method for FastqWrapper classes will check the FASTQ file by reading the first few lines 
+and attempting to import it into an \linkS4class{XStringSet} object using the relevant \pkg{Biostrings} functions, e.g., \code{\link{readDNAStringSet}}.
 }
 \examples{
 # Mocking up a FASTQ file.
-tmp <- file.path(fileext=".fa")
+tmp <- tempfile(fileext=".fq")
 write("@FOOBAR\nacgtacgt\n+134987382", tmp)
 
 # Creating a FastqWrapper.

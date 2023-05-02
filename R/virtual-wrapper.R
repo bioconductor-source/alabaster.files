@@ -79,7 +79,8 @@ load_wrapper <- function(path, inner_meta, project, constructor, ...) {
 ########################
 
 #' @export
-index <- function(x) x@index
+#' @importFrom Rsamtools index
+setMethod("index", "IndexedWrapper", function(object) x@index)
 
 construct_with_index <- function(x, index, index_constructor) {
     if (!is.null(index)) {

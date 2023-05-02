@@ -46,13 +46,13 @@ BigWigWrapper <- function(path) {
 setMethod("stageObject", "BigWigWrapper", function(x, dir, path, child=FALSE) {
     info <- save_wrapper(x, dir, path, fname="file.bw")
     list(
-        "$schema" = "bigbed_file/v1.json",
+        "$schema" = "bigwig_file/v1.json",
         path = info$path,
-        bigbed_file = info$inner
+        bigwig_file = info$inner
     )
 })
 
 #' @export
 loadBigWigWrapper <- function(meta, project) {
-    load_wrapper(meta$path, meta$bigbed_file, project, constructor=BigWigWrapper)
+    load_wrapper(meta$path, meta$bigwig_file, project, constructor=BigWigWrapper)
 }

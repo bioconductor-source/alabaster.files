@@ -44,14 +44,21 @@
 #' stageObject,FastaWrapper-method
 #' loadFastaWrapper
 #' @export
-FastaWrapper <- function(path, compression=NULL, index=NULL) {
-    construct_compressed_indexed_wrapper(path, compression=compression, index=index, wrapper_class="FastaWrapper", index_constructor=FastaIndexWrapper)
+FastaWrapper <- function(path, sequence.type="DNA", compression=NULL, index=NULL) {
+    construct_compressed_indexed_wrapper(
+        path, 
+        compression=compression, 
+        index=index, 
+        wrapper_class="FastaWrapper", 
+        index_constructor=FastaIndexWrapper,
+        sequence.type=sequence.type
+    )
 }
 
 #' @export
 #' @importFrom alabaster.base .stageObject stageObject .writeMetadata .processMetadata
 setMethod("stageObject", "FastaWrapper", function(x, dir, path, child=FALSE) {
-    info <- save_compressed_indexed_wrapper(x, dir, path, fname="file.fa", index_class="FaidxWrapper")
+    info <- save_compressed_indexed_wrapper(x, dir, path, fname="file.fa", index_class="FaidxWrapper", type=x@sequence.type)
     list(
         "$schema" = "fasta_file/v1.json",
         path = info$path,
@@ -59,8 +66,18 @@ setMethod("stageObject", "FastaWrapper", function(x, dir, path, child=FALSE) {
     )
 })
 
+setMethod("showheader", "FastaWrapper", function(object) {
+    cat(class(object)[1], "object containing", object@sequence.type, "sequences\n")
+})
+
 #' @export
 #' @importFrom alabaster.base .restoreMetadata acquireMetadata acquireFile .loadObject
 loadFastaWrapper <- function(meta, project) {
-    load_compressed_indexed_wrapper(meta$path, meta$fasta_file, project, constructor=FastaWrapper)
+    load_compressed_indexed_wrapper(
+        meta$path, 
+        meta$fasta_file, 
+        project, 
+        constructor=FastaWrapper,
+        sequence.type=meta$fasta_file$type
+    )
 }

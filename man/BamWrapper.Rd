@@ -5,7 +5,6 @@
 \alias{BamWrapper}
 \alias{BamWrapper-class}
 \alias{stageObject,BamWrapper-method}
-\alias{show,BamWrapper-method}
 \alias{loadBamWrapper}
 \title{Wrapper for a BAM file}
 \usage{

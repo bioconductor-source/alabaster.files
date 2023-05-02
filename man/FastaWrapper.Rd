@@ -8,7 +8,7 @@
 \alias{loadFastaWrapper}
 \title{Wrapper for a FASTA file}
 \usage{
-FastaWrapper(path, compression = NULL, index = NULL)
+FastaWrapper(path, sequence.type = "DNA", compression = NULL, index = NULL)
 }
 \arguments{
 \item{path}{String containing the path to a FASTA file.}

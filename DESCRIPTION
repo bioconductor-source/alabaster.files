@@ -23,7 +23,9 @@ Suggests:
     testthat,
     digest,
     rtracklayer,
-    Rsamtools
+    Rsamtools,
+    Biostrings,
+    ShortRead
 VignetteBuilder: knitr
 RoxygenNote: 7.2.3
 biocViews:

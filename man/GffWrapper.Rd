@@ -5,7 +5,6 @@
 \alias{GffWrapper}
 \alias{GffWrapper-class}
 \alias{stageObject,GffWrapper-method}
-\alias{show,GffWrapper-method}
 \alias{loadGffWrapper}
 \title{Wrapper for a GFF file}
 \usage{

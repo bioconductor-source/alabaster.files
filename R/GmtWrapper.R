@@ -8,9 +8,8 @@
 #' If \code{NULL}, this is inferred from the file's headers and suffix.
 #'
 #' @details
-#' The GmtWrapper class is a subclass of a \linkS4class{CompressedIndexedWrapper},
-#' so all of the methods of the latter can also be used here,
-#' e.g., \code{path}, \code{index}, \code{compression}.
+#' The GmtWrapper class is a subclass of a \linkS4class{CompressedWrapper},
+#' so all of the methods of the latter can also be used here, e.g., \code{path}, \code{compression}.
 #' 
 #' @author Aaron Lun
 #'
@@ -40,7 +39,6 @@
 #' @aliases
 #' GmtWrapper-class
 #' stageObject,GmtWrapper-method
-#' show,GmtWrapper-method
 #' loadGmtWrapper
 #' @export
 GmtWrapper <- function(path, compression=NULL) {

@@ -36,7 +36,6 @@
 #' @aliases
 #' BamWrapper-class
 #' stageObject,BamWrapper-method
-#' show,BamWrapper-method
 #' loadBamWrapper
 #' @export
 BamWrapper <- function(path, index=NULL) {

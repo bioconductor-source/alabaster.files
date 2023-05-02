@@ -5,7 +5,6 @@
 \alias{GmtWrapper}
 \alias{GmtWrapper-class}
 \alias{stageObject,GmtWrapper-method}
-\alias{show,GmtWrapper-method}
 \alias{loadGmtWrapper}
 \title{Wrapper for a GMT file}
 \usage{
@@ -25,9 +24,8 @@ A GmtWrapper instance that can be used in \code{\link{stageObject}}.
 Wrap a GMT file for saving and loading in the \pkg{alabaster} framework.
 }
 \details{
-The GmtWrapper class is a subclass of a \linkS4class{CompressedIndexedWrapper},
-so all of the methods of the latter can also be used here,
-e.g., \code{path}, \code{index}, \code{compression}.
+The GmtWrapper class is a subclass of a \linkS4class{CompressedWrapper},
+so all of the methods of the latter can also be used here, e.g., \code{path}, \code{compression}.
 }
 \examples{
 # Mocking up a GMT file.

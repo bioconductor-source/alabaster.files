@@ -8,7 +8,13 @@
 \alias{loadFastqWrapper}
 \title{Wrapper for a FASTQ file}
 \usage{
-FastqWrapper(path, encoding, compression = NULL, index = NULL)
+FastqWrapper(
+  path,
+  encoding,
+  sequence.type = "DNA",
+  compression = NULL,
+  index = NULL
+)
 }
 \arguments{
 \item{path}{String containing the path to a FASTQ file.}

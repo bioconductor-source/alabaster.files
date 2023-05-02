@@ -12,7 +12,7 @@ setClass("CompressedWrapper", contains=c("Wrapper", "VIRTUAL"), slots=c(compress
 setClass("CompressedIndexedWrapper", contains=c("IndexedWrapper", "CompressedWrapper", "VIRTUAL"))
 
 #' @export
-setClass("BamWrapper", contains="IndexedWrapper", slots=c(sorted="character"))
+setClass("BamWrapper", contains="IndexedWrapper")
 
 #' @export
 setClass("BamIndexWrapper", contains="Wrapper")
@@ -23,9 +23,9 @@ setClass("BedWrapper", contains="CompressedIndexedWrapper")
 #' @export
 setClass("TabixWrapper", contains="Wrapper")
 
-setClass("FastaWrapper", contains="CompressedIndexedWrapper")
+setClass("FastaWrapper", contains="CompressedIndexedWrapper", slots=c(sequence.type="character"))
 
-setClass("FastqWrapper", contains="CompressedIndexedWrapper")
+setClass("FastqWrapper", contains="CompressedIndexedWrapper", slots=c(sequence.type="character", encoding="character"))
 
 #' @export
 setClass("FaidxWrapper", contains="Wrapper")
@@ -40,4 +40,3 @@ setClass("GmtWrapper", contains="CompressedWrapper")
 setClass("BigWigWrapper", contains="Wrapper")
 
 setClass("BigBedWrapper", contains="Wrapper")
-

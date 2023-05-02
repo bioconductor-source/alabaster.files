@@ -44,20 +44,24 @@ setMethod("path", "Wrapper", function(object) object@path)
 #' @export
 #' @importFrom S4Vectors coolcat metadata
 setMethod("show", "Wrapper", function(object) {
-    cat(class(object)[1], "object\n")
+    showheader(object)
     cat("path:", object@path, "\n")
     coolcat("metadata(%i): %s", names(metadata(object)))
 })
 
+setMethod("showheader", "Wrapper", function(object) {
+    cat(class(object)[1], "object\n")
+})
+
 #' @importFrom alabaster.base .processMetadata
-save_wrapper <- function(x, dir, path, fname, index_class) {
+save_wrapper <- function(x, dir, path, fname, index_class, ...) {
     dir.create(file.path(dir, path), showWarnings=FALSE, recursive=TRUE)
 
     target <- paste0(path, "/", fname)
     host <- file.path(dir, target)
     transfer_file(x@path, host)
 
-    inner_meta <- list()
+    inner_meta <- list(...)
     inner_meta$other_data <- .processMetadata(x, dir, path, "other") 
     names(inner_meta) <- as.character(names(inner_meta)) # force object-ness.
 
@@ -126,21 +130,21 @@ construct_indexed_wrapper <- function(path, index, wrapper_class, index_construc
 #' @export
 #' @importFrom S4Vectors coolcat metadata
 setMethod("show", "IndexedWrapper", function(object) {
-    cat(class(object)[1], "object\n")
+    showheader(object)
     cat("path:", object@path, "\n")
     show_with_index(object)
     coolcat("metadata(%i): %s", names(metadata(object)))
 })
 
 #' @importFrom alabaster.base .processMetadata
-save_indexed_wrapper <- function(x, dir, path, fname, index_class) {
+save_indexed_wrapper <- function(x, dir, path, fname, index_class, ...) {
     dir.create(file.path(dir, path), showWarnings=FALSE, recursive=TRUE)
 
     target <- paste0(path, "/", fname)
     host <- file.path(dir, target)
     transfer_file(x@path, host)
 
-    inner_meta <- list()
+    inner_meta <- list(...)
     inner_meta$other_data <- .processMetadata(x, dir, path, "other") 
     inner_meta <- stage_with_index(x, dir, path, inner_meta=inner_meta, index_class=index_class)
     names(inner_meta) <- as.character(names(inner_meta)) # force object-ness.
@@ -173,7 +177,7 @@ construct_compressed_indexed_wrapper <- function(path, compression, index, wrapp
 #' @export
 #' @importFrom S4Vectors coolcat metadata
 setMethod("show", "CompressedIndexedWrapper", function(object) {
-    cat(class(object)[1], "object\n")
+    showheader(object)
     cat("path:", object@path, "\n")
     cat("compression:", object@compression, "\n")
     show_with_index(object)
@@ -181,14 +185,14 @@ setMethod("show", "CompressedIndexedWrapper", function(object) {
 })
 
 #' @importFrom alabaster.base .processMetadata
-save_compressed_indexed_wrapper <- function(x, dir, path, fname, index_class) {
+save_compressed_indexed_wrapper <- function(x, dir, path, fname, index_class, ...) {
     dir.create(file.path(dir, path), showWarnings=FALSE, recursive=TRUE)
 
     target <- paste0(path, "/", fname, compression_extension(x@compression))
     host <- file.path(dir, target)
     transfer_file(x@path, host)
 
-    inner_meta <- list(compression = x@compression)
+    inner_meta <- list(compression = x@compression, ...)
     inner_meta$other_data <- .processMetadata(x, dir, path, "other") 
     inner_meta <- stage_with_index(x, dir, path, inner_meta=inner_meta, index_class=index_class)
 
@@ -216,21 +220,21 @@ construct_compressed_wrapper <- function(path, compression, wrapper_class, ...) 
 #' @export
 #' @importFrom S4Vectors coolcat metadata
 setMethod("show", "CompressedWrapper", function(object) {
-    cat(class(object)[1], "object\n")
+    showheader(object)
     cat("path:", object@path, "\n")
     cat("compression:", object@compression, "\n")
     coolcat("metadata(%i): %s", names(metadata(object)))
 })
 
 #' @importFrom alabaster.base .processMetadata
-save_compressed_wrapper <- function(x, dir, path, fname, index_class) {
+save_compressed_wrapper <- function(x, dir, path, fname, index_class, ...) {
     dir.create(file.path(dir, path), showWarnings=FALSE, recursive=TRUE)
 
     target <- paste0(path, "/", fname, compression_extension(x@compression))
     host <- file.path(dir, target)
     transfer_file(x@path, host)
 
-    inner_meta <- list(compression = x@compression)
+    inner_meta <- list(compression = x@compression, ...)
     inner_meta$other_data <- .processMetadata(x, dir, path, "other") 
 
     list(inner = inner_meta, path = target)

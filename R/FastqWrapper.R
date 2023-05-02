@@ -46,14 +46,21 @@
 #' stageObject,FastqWrapper-method
 #' loadFastqWrapper
 #' @export
-FastqWrapper <- function(path, encoding, compression=NULL, index=NULL) {
-    construct_compressed_indexed_wrapper(path, compression=compression, index=index, wrapper_class="FastqWrapper", index_constructor=TabixWrapper)
+FastqWrapper <- function(path, encoding, sequence.type="DNA", compression=NULL, index=NULL) {
+    construct_compressed_indexed_wrapper(path, 
+        compression=compression, 
+        index=index, 
+        wrapper_class="FastqWrapper", 
+        index_constructor=TabixWrapper,
+        sequence.type=sequence.type,
+        encoding=encoding
+    )
 }
 
 #' @export
 #' @importFrom alabaster.base .stageObject stageObject .writeMetadata .processMetadata
 setMethod("stageObject", "FastqWrapper", function(x, dir, path, child=FALSE) {
-    info <- save_compressed_indexed_wrapper(x, dir, path, fname="file.fastq", index_class="FaidxWrapper")
+    info <- save_compressed_indexed_wrapper(x, dir, path, fname="file.fastq", index_class="FaidxWrapper", type=x@sequence.type, quality_encoding=x@encoding)
     list(
         "$schema" = "fastq_file/v1.json",
         path = info$path,
@@ -61,8 +68,19 @@ setMethod("stageObject", "FastqWrapper", function(x, dir, path, child=FALSE) {
     )
 })
 
+setMethod("showheader", "FastqWrapper", function(object) {
+    cat(class(object)[1], "object containing", object@sequence.type, "sequences with ", object@encoding, "quality scores\n")
+})
+
 #' @export
 #' @importFrom alabaster.base .restoreMetadata acquireMetadata acquireFile .loadObject
 loadFastqWrapper <- function(meta, project) {
-    load_compressed_indexed_wrapper(meta$path, meta$fastq_file, project, constructor=FastqWrapper, encoding=meta$fastq_file$quality_encoding)
+    load_compressed_indexed_wrapper(
+        meta$path, 
+        meta$fastq_file, 
+        project, 
+        constructor=FastqWrapper, 
+        sequence.type=meta$fastq_file$type,
+        encoding=meta$fastq_file$quality_encoding
+    )
 }

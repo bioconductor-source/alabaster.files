@@ -45,7 +45,6 @@
 #' @aliases
 #' GffWrapper-class
 #' stageObject,GffWrapper-method
-#' show,GffWrapper-method
 #' loadGffWrapper
 #' @export
 GffWrapper <- function(path, compression=NULL, index=NULL, format=NULL) {
@@ -77,10 +76,8 @@ setMethod("stageObject", "GffWrapper", function(x, dir, path, child=FALSE) {
     meta
 })
 
-#' @export
-setMethod("show", "GffWrapper", function(object) {
-    callNextMethod()
-    cat("format:", object@format, "\n")
+setMethod("showheader", "GffWrapper", function(object) {
+    cat(class(object)[1], "object in the", object@format, "format\n")
 })
 
 #' @export

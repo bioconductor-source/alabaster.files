@@ -64,6 +64,6 @@ test_that("GFF wrapper with index works correctly", {
     # Loading it back again:
     meta <- acquireMetadata(dir, "my_gff/file.gff3.bgz")
     roundtrip <- loadObject(meta, dir)
-    expect_s4_class(index(roundtrip), "TabixWrapper")
+    expect_s4_class(index(roundtrip), "TabixIndexWrapper")
     expect_identical(file.size(path(index(roundtrip))), file.size(index.file))
 })

@@ -22,6 +22,8 @@ FastqWrapper(
 \item{encoding}{String specifying the encoding of the quality strings.
 This should be one of \code{"phred"}, \code{"solexa"} or \code{"illumina"}.}
 
+\item{sequence.type}{String specifying the sequence type, should be one of \code{"DNA"}, \code{"RNA"} or \code{"AA"}.}
+
 \item{compression}{String specifying the compression.
 This should be one of \code{"none"}, \code{"gzip"}, \code{"bzip2"} or \code{"bgzip"}.
 If \code{NULL}, this is inferred from the file's headers and suffix.}
@@ -48,7 +50,7 @@ tmp <- tempfile(fileext=".fq")
 write("@FOOBAR\nacgtacgt\n+134987382", tmp)
 
 # Creating a FastqWrapper.
-wrapped <- FastqWrapper(tmp)
+wrapped <- FastqWrapper(tmp, encoding="phred")
 wrapped
 
 # Staging the FastqWrapper.
@@ -59,7 +61,7 @@ invisible(.writeMetadata(info, dir))
 list.files(dir, recursive=TRUE)
 
 # Loading it back again:
-meta <- acquireMetadata(dir, "seq/file.fa")
+meta <- acquireMetadata(dir, "seq/file.fastq")
 loadObject(meta, dir)
 
 }

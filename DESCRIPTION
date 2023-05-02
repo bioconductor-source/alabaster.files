@@ -12,9 +12,7 @@ Description:
 Depends:
     alabaster.base,
 Imports:
-    alabaster.schemas,
     methods,
-    utils,
     S4Vectors,
     BiocGenerics,
     rtracklayer,
@@ -24,10 +22,7 @@ Suggests:
     BiocStyle,
     rmarkdown,
     knitr,
-    testthat,
-    digest,
-    Biostrings,
-    ShortRead
+    testthat
 VignetteBuilder: knitr
 RoxygenNote: 7.2.3
 biocViews:

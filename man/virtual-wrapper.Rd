@@ -5,10 +5,16 @@
 \alias{virtual-wrapper}
 \alias{Wrapper-class}
 \alias{IndexedWrapper-class}
-\alias{CompressedIndexWrapper-class}
+\alias{CompressedWrapper-class}
+\alias{CompressedIndexedWrapper-class}
+\alias{path}
 \alias{path,Wrapper-method}
 \alias{index}
+\alias{index,IndexedWrapper-method}
 \alias{compression}
+\alias{show,Wrapper-method}
+\alias{show,CompressedWrapper-method}
+\alias{show,IndexedWrapper-method}
 \alias{show,CompressedIndexedWrapper-method}
 \title{Virtual wrapper classes}
 \description{

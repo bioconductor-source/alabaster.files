@@ -13,6 +13,8 @@ FastaWrapper(path, sequence.type = "DNA", compression = NULL, index = NULL)
 \arguments{
 \item{path}{String containing the path to a FASTA file.}
 
+\item{sequence.type}{String specifying the sequence type, should be one of \code{"DNA"}, \code{"RNA"} or \code{"AA"}.}
+
 \item{compression}{String specifying the compression.
 This should be one of \code{"none"}, \code{"gzip"}, \code{"bzip2"} or \code{"bgzip"}.
 If \code{NULL}, this is inferred from the file's headers and suffix.}

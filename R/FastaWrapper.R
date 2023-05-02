@@ -8,6 +8,7 @@
 #' If \code{NULL}, this is inferred from the file's headers and suffix.
 #' @param index String specifying the path to an faidx file, or \code{NULL} if no index is available.
 #' If an index is supplied, the file should be uncompressed or bgzip-compressed.
+#' @param sequence.type String specifying the sequence type, should be one of \code{"DNA"}, \code{"RNA"} or \code{"AA"}.
 #'
 #' @details
 #' The FastaWrapper class is a subclass of a \linkS4class{CompressedIndexedWrapper},

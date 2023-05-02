@@ -1,4 +1,5 @@
 #' @export
+#' @import methods
 #' @importClassesFrom S4Vectors Annotated
 setClass("Wrapper", contains=c("Annotated", "VIRTUAL"), slots=c(path="character"))
 

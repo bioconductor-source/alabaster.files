@@ -27,11 +27,17 @@
 #' @aliases
 #' Wrapper-class
 #' IndexedWrapper-class
-#' CompressedIndexWrapper-class
+#' CompressedWrapper-class
+#' CompressedIndexedWrapper-class
 #'
+#' path
 #' path,Wrapper-method
 #' index
+#' index,IndexedWrapper-method
 #' compression
+#' show,Wrapper-method
+#' show,CompressedWrapper-method
+#' show,IndexedWrapper-method
 #' show,CompressedIndexedWrapper-method
 #'
 #' @name virtual-wrapper
@@ -80,7 +86,7 @@ load_wrapper <- function(path, inner_meta, project, constructor, ...) {
 
 #' @export
 #' @importFrom Rsamtools index
-setMethod("index", "IndexedWrapper", function(object) x@index)
+setMethod("index", "IndexedWrapper", function(object) object@index)
 
 construct_with_index <- function(x, index, index_constructor) {
     if (!is.null(index)) {

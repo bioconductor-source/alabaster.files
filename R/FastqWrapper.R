@@ -10,6 +10,7 @@
 #' If \code{NULL}, this is inferred from the file's headers and suffix.
 #' @param index String specifying the path to an faidx file, or \code{NULL} if no index is available.
 #' If an index is supplied, the file should be uncompressed or bgzip-compressed.
+#' @param sequence.type String specifying the sequence type, should be one of \code{"DNA"}, \code{"RNA"} or \code{"AA"}.
 #'
 #' @details
 #' The FastqWrapper class is a subclass of a \linkS4class{CompressedIndexedWrapper},
@@ -28,7 +29,7 @@
 #' write("@FOOBAR\nacgtacgt\n+134987382", tmp)
 #'
 #' # Creating a FastqWrapper.
-#' wrapped <- FastqWrapper(tmp)
+#' wrapped <- FastqWrapper(tmp, encoding="phred")
 #' wrapped
 #'
 #' # Staging the FastqWrapper.
@@ -39,7 +40,7 @@
 #' list.files(dir, recursive=TRUE)
 #'
 #' # Loading it back again:
-#' meta <- acquireMetadata(dir, "seq/file.fa")
+#' meta <- acquireMetadata(dir, "seq/file.fastq")
 #' loadObject(meta, dir)
 #' 
 #' @docType class

@@ -9,7 +9,7 @@ is_bzip2 <- function(header) {
 guess_compression <- function(path) {
     if (endsWith(path, ".gz") || endsWith(path, ".bgz")) {
         header <- readBin(path, what=raw(), n=2)
-        if (is_gzip(header)) {
+        if (!is_gzip(header)) {
             stop("file ending with '.(b)gz' does not have Gzip magic numbers")
         }
         if (endsWith(path, ".gz")) {
@@ -19,7 +19,7 @@ guess_compression <- function(path) {
         }
     } else if (endsWith(path, ".bz2")) {
         header <- readBin(path, what=raw(), n=3)
-        if (is_bzip2(header)) {
+        if (!is_bzip2(header)) {
             stop("file ending with '.bz2' does not have Bzip2 magic numbers")
         }
         return("bzip2")

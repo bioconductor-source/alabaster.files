@@ -50,7 +50,7 @@ FastaWrapper <- function(path, sequence.type="DNA", compression=NULL, index=NULL
         compression=compression, 
         index=index, 
         wrapper_class="FastaWrapper", 
-        index_constructor=FastaIndexWrapper,
+        index_constructor=FaidxWrapper,
         sequence.type=sequence.type
     )
 }

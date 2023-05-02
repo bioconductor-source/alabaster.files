@@ -49,9 +49,9 @@
 #' @export
 GffWrapper <- function(path, compression=NULL, index=NULL, format=NULL) {
     if (is.null(format)) {
-        if (endsWith(path, ".gff2") || endsWith(path, ".gtf")) {
+        if (grepl(gff2.pattern, path)) {
             format <- "GFF2"
-        } else if (endsWith(path, ".gff3")) {
+        } else if (grepl(gff3.pattern, path)) {
             format <- "GFF3"
         } else {
             stop("cannot automatically determine GFF format from file extension")
@@ -59,6 +59,10 @@ GffWrapper <- function(path, compression=NULL, index=NULL, format=NULL) {
     }
     construct_compressed_indexed_wrapper(path, compression=compression, index=index, wrapper_class="GffWrapper", index_constructor=TabixWrapper, format=format)
 }
+
+ext.pattern <- "\\.%s(\\.bz2|\\.gz|\\.bgz)?$"
+gff2.pattern <- sprintf(ext.pattern, "(gff2|gtf)")
+gff3.pattern <- sprintf(ext.pattern, "gff3")
 
 #' @export
 #' @importFrom alabaster.base .stageObject stageObject .writeMetadata .processMetadata

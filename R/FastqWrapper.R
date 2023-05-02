@@ -51,7 +51,7 @@ FastqWrapper <- function(path, encoding, sequence.type="DNA", compression=NULL, 
         compression=compression, 
         index=index, 
         wrapper_class="FastqWrapper", 
-        index_constructor=TabixWrapper,
+        index_constructor=FaidxWrapper,
         sequence.type=sequence.type,
         encoding=encoding
     )

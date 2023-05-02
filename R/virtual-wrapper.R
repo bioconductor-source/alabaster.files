@@ -93,20 +93,20 @@ construct_with_index <- function(x, index, index_constructor) {
 
 show_with_index <- function(x) {
     if (length(x@index)) {
-        cat("index:", x@index[[1]]@path, "\n")
+        cat("index:", x@index@path, "\n")
     } else {
         cat("index: <none>\n")
     }
 }
 
 #' @importFrom alabaster.base .stageObject .writeMetadata
-stage_with_index <- function(x, dir, path, inner_meta, index_class) {
+stage_with_index <- function(x, dir, path, parent, inner_meta, index_class) {
     index <- x@index
     if (!is.null(index)) {
         if (!is(index, index_class)) {
             stop("expected the index to be a '", index_class, "' instance")
         }
-        imeta <- .stageObject(index, dir, paste0(path, "index"), child=TRUE)
+        imeta <- .stageObject(index, dir, paste0(path, "/index"), parent=parent, child=TRUE)
         inner_meta$index <- list(resource=.writeMetadata(imeta, dir))
     }
     inner_meta
@@ -146,7 +146,7 @@ save_indexed_wrapper <- function(x, dir, path, fname, index_class, ...) {
 
     inner_meta <- list(...)
     inner_meta$other_data <- .processMetadata(x, dir, path, "other") 
-    inner_meta <- stage_with_index(x, dir, path, inner_meta=inner_meta, index_class=index_class)
+    inner_meta <- stage_with_index(x, dir, path, parent=fname, inner_meta=inner_meta, index_class=index_class)
     names(inner_meta) <- as.character(names(inner_meta)) # force object-ness.
 
     list(inner = inner_meta, path = target)
@@ -188,13 +188,14 @@ setMethod("show", "CompressedIndexedWrapper", function(object) {
 save_compressed_indexed_wrapper <- function(x, dir, path, fname, index_class, ...) {
     dir.create(file.path(dir, path), showWarnings=FALSE, recursive=TRUE)
 
-    target <- paste0(path, "/", fname, compression_extension(x@compression))
+    parent <- paste0(fname, compression_extension(x@compression))
+    target <- paste0(path, "/", parent)
     host <- file.path(dir, target)
     transfer_file(x@path, host)
 
     inner_meta <- list(compression = x@compression, ...)
     inner_meta$other_data <- .processMetadata(x, dir, path, "other") 
-    inner_meta <- stage_with_index(x, dir, path, inner_meta=inner_meta, index_class=index_class)
+    inner_meta <- stage_with_index(x, dir, path, parent=parent, inner_meta=inner_meta, index_class=index_class)
 
     list(inner = inner_meta, path = target)
 }

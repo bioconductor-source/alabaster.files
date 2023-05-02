@@ -47,12 +47,12 @@ test_that("FASTQ wrapper works correctly with compression", {
 })
 
 test_that("FASTQ wrapper with index works correctly", {
-    comp <- Rsamtools::bgzip(fl)
-    index.file <- Rsamtools::indexFa(comp, format="fastq")
+    comp <- Rsamtools::bgzip(fl, dest=tempfile(fileext=".bgz"))
+    index.file <- Rsamtools::indexFa(comp) # not a valid file, as Rsamtools doesn't know anything about indexing Fastq files... whatever.
 
     wrapped <- FastqWrapper(comp, encoding="phred", index=index.file)
     expect_output(show(wrapped), "index:")
-    expect_s4_class(index(wrapped), "FaidxWrapper")
+    expect_s4_class(index(wrapped), "FaIndexWrapper")
 
     # Staging the FastqWrapper.
     dir <- tempfile()
@@ -63,6 +63,6 @@ test_that("FASTQ wrapper with index works correctly", {
     # Loading it back again:
     meta <- acquireMetadata(dir, "my_fastq/file.fastq.bgz")
     roundtrip <- loadObject(meta, dir)
-    expect_s4_class(index(roundtrip), "FaidxWrapper")
+    expect_s4_class(index(roundtrip), "FaIndexWrapper")
     expect_identical(file.size(path(index(roundtrip))), file.size(index.file))
 })

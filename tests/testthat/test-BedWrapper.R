@@ -52,7 +52,7 @@ test_that("BED wrapper with index works correctly", {
 
     wrapped <- BedWrapper(comp, index=index.file)
     expect_output(show(wrapped), "index:")
-    expect_s4_class(index(wrapped), "TabixWrapper")
+    expect_s4_class(index(wrapped), "TabixIndexWrapper")
 
     # Staging the BedWrapper.
     dir <- tempfile()
@@ -63,6 +63,6 @@ test_that("BED wrapper with index works correctly", {
     # Loading it back again:
     meta <- acquireMetadata(dir, "my_bed/file.bed.bgz")
     roundtrip <- loadObject(meta, dir)
-    expect_s4_class(index(roundtrip), "TabixWrapper")
+    expect_s4_class(index(roundtrip), "TabixIndexWrapper")
     expect_identical(file.size(path(index(roundtrip))), file.size(index.file))
 })

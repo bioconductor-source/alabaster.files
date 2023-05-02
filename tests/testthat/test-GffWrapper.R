@@ -53,7 +53,7 @@ test_that("GFF wrapper with index works correctly", {
 
     wrapped <- GffWrapper(comp, index=index.file)
     expect_output(show(wrapped), "index:")
-    expect_s4_class(index(wrapped), "TabixWrapper")
+    expect_s4_class(index(wrapped), "TabixIndexWrapper")
 
     # Staging the GffWrapper.
     dir <- tempfile()

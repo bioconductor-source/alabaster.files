@@ -32,6 +32,7 @@ so all of the methods of the latter can also be used here, e.g., \code{path}, \c
 
 The \code{stageObject} method for FastaWrapper classes will check the FASTA file by reading the first few lines 
 and attempting to import it into an \linkS4class{XStringSet} object using the relevant \pkg{Biostrings} functions, e.g., \code{\link{readDNAStringSet}}.
+If an index is supplied, the method will check its validity via \code{\link{scanFaIndex}}.
 }
 \examples{
 # Mocking up a FASTA file.

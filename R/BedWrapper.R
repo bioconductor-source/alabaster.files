@@ -15,6 +15,7 @@
 #'
 #' The \code{stageObject} method for BedWrapper classes will check the BED file by reading the first few lines 
 #' and attempting to import it into a GRanges via \code{\link{import.bed}} or \code{\link{import.bed15}}.
+#' If an index file is supplied, it will attempt to use that index in \code{\link{headerTabix}}.
 #' 
 #' @author Aaron Lun
 #'
@@ -53,6 +54,7 @@ BedWrapper <- function(path, compression=NULL, index=NULL) {
 #' @export
 #' @importFrom alabaster.base .stageObject stageObject .writeMetadata .processMetadata
 #' @importFrom rtracklayer import.bed import.bed15
+#' @importFrom Rsamtools TabixFile headerTabix
 setMethod("stageObject", "BedWrapper", function(x, dir, path, child=FALSE, validate=TRUE) {
     top.lines <- read_first_few_lines(x@path, compression=x@compression)
 
@@ -68,6 +70,11 @@ setMethod("stageObject", "BedWrapper", function(x, dir, path, child=FALSE, valid
     con <- textConnection(top.lines)
     validator <- if (format=="BED") import.bed else import.bed15
     validator(con)
+
+    if (!is.null(x@index)) {
+        handle <- TabixFile(x@path, index=x@index@path)
+        headerTabix(handle)
+    }
 
     info <- save_compressed_indexed_wrapper(x, dir, path, fname="file.bed", index_class="TabixIndexWrapper")
     meta <- list(

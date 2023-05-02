@@ -26,6 +26,7 @@ The BamWrapper class is a subclass of a \linkS4class{IndexedWrapper},
 so all of the methods of the latter can also be used here, e.g., \code{path}, \code{index}.
 
 The \code{stageObject} method for BamWrapper classes will check the BAM file by scanning the header with \code{\link{scanBamHeader}}.
+If an index is present, it will additionally run \code{\link{idxstatsBam}}.
 }
 \examples{
 # Using a BAM file from Rsamtools.

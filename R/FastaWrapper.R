@@ -15,6 +15,7 @@
 #'
 #' The \code{stageObject} method for FastaWrapper classes will check the FASTA file by reading the first few lines 
 #' and attempting to import it into an \linkS4class{XStringSet} object using the relevant \pkg{Biostrings} functions, e.g., \code{\link{readDNAStringSet}}.
+#' If an index is supplied, the method will check its validity via \code{\link{scanFaIndex}}.
 #' 
 #' @author Aaron Lun
 #'
@@ -66,10 +67,19 @@ fa_validator <- function(x) {
     )
 }
 
+#' @importFrom Rsamtools FaFile scanFaIndex
+fa_index_validator <- function(x) {
+    if (!is.null(x@index)) {
+        handle <- FaFile(x@path, index=x@index@path, gzindex=x@index@path)
+        scanFaIndex(handle)
+    }
+}
+
 #' @export
 #' @importFrom alabaster.base .stageObject stageObject .writeMetadata .processMetadata
 setMethod("stageObject", "FastaWrapper", function(x, dir, path, child=FALSE) {
     fa_validator(x)(x@path, format="fasta", nrec=10) # reading the first few records to validate them.
+    fa_index_validator(x)
 
     info <- save_compressed_indexed_wrapper(x, dir, path, fname="file.fa", index_class="FaIndexWrapper", type=x@sequence.type)
     list(

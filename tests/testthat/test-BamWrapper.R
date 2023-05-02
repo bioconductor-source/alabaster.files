@@ -25,7 +25,10 @@ test_that("BAM wrapper works correctly", {
 })
 
 test_that("BAM wrapper with index works correctly", {
-    index.file <- paste0(fl, ".bai")
+    src.index.file <- paste0(fl, ".bai")
+    index.file <- tempfile(fileext=".bai")
+    file.copy(src.index.file, index.file) # renaming the index to test that the staging works with non-matching index name.
+
     wrapped <- BamWrapper(fl, index=index.file)
     expect_s4_class(index(wrapped), "BamIndexWrapper")
     expect_output(show(wrapped), "index:")

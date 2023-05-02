@@ -32,6 +32,7 @@ so all of the methods of the latter can also be used here, e.g., \code{path}, \c
 
 The \code{stageObject} method for BedWrapper classes will check the BED file by reading the first few lines 
 and attempting to import it into a GRanges via \code{\link{import.bed}} or \code{\link{import.bed15}}.
+If an index file is supplied, it will attempt to use that index in \code{\link{headerTabix}}.
 }
 \examples{
 # Mocking up a BED file.

@@ -10,6 +10,7 @@
 #' so all of the methods of the latter can also be used here, e.g., \code{path}, \code{index}.
 #' 
 #' The \code{stageObject} method for BamWrapper classes will check the BAM file by scanning the header with \code{\link{scanBamHeader}}.
+#' If an index is present, it will additionally run \code{\link{idxstatsBam}}.
 #' 
 #' @author Aaron Lun
 #'
@@ -45,9 +46,13 @@ BamWrapper <- function(path, index=NULL) {
 }
 
 #' @export
-#' @importFrom Rsamtools scanBamHeader
+#' @importFrom Rsamtools scanBamHeader BamFile idxstatsBam
 setMethod("stageObject", "BamWrapper", function(x, dir, path, child=FALSE) {
     scanBamHeader(x@path) # validating it by scanning the header.
+    if (!is.null(x@index)) {
+        handle <- BamFile(x@path, index=x@index@path)
+        idxstatsBam(handle)
+    }
 
     info <- save_indexed_wrapper(x, dir, path, fname="file.bam", index_class="BamIndexWrapper")
     list(

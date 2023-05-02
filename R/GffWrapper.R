@@ -18,6 +18,7 @@
 #' 
 #' The \code{stageObject} method for GffWrapper classes will check the GFF file by reading the first few lines 
 #' and attempting to import it into a GRanges via \code{\link{import.gff2}} or \code{\link{import.gff3}}.
+#' If an index file is supplied, it will attempt to use that index in \code{\link{headerTabix}}.
 #'
 #' @author Aaron Lun
 #'
@@ -79,6 +80,11 @@ setMethod("stageObject", "GffWrapper", function(x, dir, path, child=FALSE) {
     on.exit(unlink(tmp))
     validator <- if (x@format=="GFF3") import.gff3 else import.gff2
     validator(tmp)
+
+    if (!is.null(x@index)) {
+        handle <- TabixFile(x@path, index=x@index@path)
+        headerTabix(handle)
+    }
 
     info <- save_compressed_indexed_wrapper(x, dir, path, fname=paste0("file.", ext), index_class="TabixIndexWrapper")
 

@@ -46,13 +46,35 @@ test_that("FASTA wrapper works correctly with compression", {
     expect_identical(compression(wrapped), "bgzip")
 })
 
-test_that("FASTA wrapper with index works correctly", {
-    comp <- Rsamtools::bgzip(fl)
+test_that("FASTA wrapper with index works correctly without compression", {
+    comp <- tempfile(fileext=".fa")
+    file.copy(fl, comp)
     index.file <- Rsamtools::indexFa(comp, format="fa")
 
     wrapped <- FastaWrapper(comp, index=index.file)
     expect_output(show(wrapped), "index:")
-    expect_s4_class(index(wrapped), "FaidxWrapper")
+    expect_s4_class(index(wrapped), "FaIndexWrapper")
+
+    # Staging the FastaWrapper.
+    dir <- tempfile()
+    info <- stageObject(wrapped, dir, "my_fa")
+    invisible(.writeMetadata(info, dir))
+    expect_true("my_fa/index/file.fa.fai" %in% list.files(dir, recursive=TRUE))
+
+    # Loading it back again:
+    meta <- acquireMetadata(dir, "my_fa/file.fa")
+    roundtrip <- loadObject(meta, dir)
+    expect_s4_class(index(roundtrip), "FaIndexWrapper")
+    expect_identical(file.size(path(index(roundtrip))), file.size(index.file))
+})
+
+test_that("FASTA wrapper with index works correctly with compression", {
+    comp <- Rsamtools::bgzip(fl, dest=tempfile(fileext=".fa.bgz"))
+    index.file <- Rsamtools::indexFa(comp)
+
+    wrapped <- FastaWrapper(comp, index=index.file)
+    expect_output(show(wrapped), "index:")
+    expect_s4_class(index(wrapped), "FaIndexWrapper")
 
     # Staging the FastaWrapper.
     dir <- tempfile()
@@ -63,6 +85,6 @@ test_that("FASTA wrapper with index works correctly", {
     # Loading it back again:
     meta <- acquireMetadata(dir, "my_fa/file.fa.bgz")
     roundtrip <- loadObject(meta, dir)
-    expect_s4_class(index(roundtrip), "FaidxWrapper")
+    expect_s4_class(index(roundtrip), "FaIndexWrapper")
     expect_identical(file.size(path(index(roundtrip))), file.size(index.file))
 })

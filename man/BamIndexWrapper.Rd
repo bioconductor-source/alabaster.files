@@ -39,7 +39,7 @@ invisible(.writeMetadata(info, dir))
 list.files(dir, recursive=TRUE)
 
 # Loading it back again:
-meta <- acquireMetadata(dir, "tab/file.bai")
+meta <- acquireMetadata(dir, "tab/file.bam.bai")
 loadObject(meta, dir)
 
 }

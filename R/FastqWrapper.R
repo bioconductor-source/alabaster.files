@@ -10,6 +10,9 @@
 #' If \code{NULL}, this is inferred from the file's headers and suffix.
 #' @param index String specifying the path to an faidx file, or \code{NULL} if no index is available.
 #' If an index is supplied, the file should be uncompressed or bgzip-compressed.
+#' @param gzindex String specifying the path to a bgzip index file, or \code{NULL} if no index is available.
+#' If an bgzip index is supplied, the file at \code{path} should be bgzip-compressed.
+#' This index is mandatory if \code{index} is supplied and \code{path} is bgzip-compressed.
 #' @param sequence.type String specifying the sequence type, should be one of \code{"DNA"}, \code{"RNA"} or \code{"AA"}.
 #'
 #' @details
@@ -47,25 +50,25 @@
 #' @aliases
 #' FastqWrapper-class
 #' stageObject,FastqWrapper-method
+#' show,FastqWrapper-method
 #' loadFastqWrapper
 #' @export
-FastqWrapper <- function(path, encoding, sequence.type="DNA", compression=NULL, index=NULL) {
-    construct_compressed_indexed_wrapper(path, 
+FastqWrapper <- function(path, encoding, sequence.type="DNA", compression=NULL, index=NULL, gzindex=NULL) {
+    construct_fa_wrapper(path, 
         compression=compression, 
         index=index, 
+        gzindex=gzindex,
         wrapper_class="FastqWrapper", 
-        index_constructor=FaIndexWrapper,
         sequence.type=sequence.type,
         encoding=encoding
     )
 }
 
 #' @export
-#' @importFrom alabaster.base .stageObject stageObject .writeMetadata .processMetadata
 setMethod("stageObject", "FastqWrapper", function(x, dir, path, child=FALSE) {
     fa_validator(x)(x@path, format="fastq", nrec=10, with.qualities=TRUE) # reading the first few records to validate them.
 
-    info <- save_compressed_indexed_wrapper(x, dir, path, fname="file.fastq", index_class="FaIndexWrapper", type=x@sequence.type, quality_encoding=x@encoding)
+    info <- save_fa_wrapper(x, dir, path, fname="file.fastq", sequence.type=x@sequence.type, quality_encoding=x@encoding)
     list(
         "$schema" = "fastq_file/v1.json",
         path = info$path,
@@ -75,12 +78,13 @@ setMethod("stageObject", "FastqWrapper", function(x, dir, path, child=FALSE) {
 
 setMethod("showheader", "FastqWrapper", function(object) {
     cat(class(object)[1], "object containing", object@sequence.type, "sequences with ", object@encoding, "quality scores\n")
+    show_fa_wrapper(object)
 })
 
 #' @export
 #' @importFrom alabaster.base .restoreMetadata acquireMetadata acquireFile .loadObject
 loadFastqWrapper <- function(meta, project) {
-    load_compressed_indexed_wrapper(
+    load_fa_wrapper(
         meta$path, 
         meta$fastq_file, 
         project, 

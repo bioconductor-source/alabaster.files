@@ -49,7 +49,9 @@ test_that("FASTA wrapper works correctly with compression", {
 test_that("FASTA wrapper with index works correctly without compression", {
     comp <- tempfile(fileext=".fa")
     file.copy(fl, comp)
-    index.file <- Rsamtools::indexFa(comp, format="fa")
+    index.file.raw <- Rsamtools::indexFa(comp, format="fa")
+    index.file <- tempfile(fileext=".fai")
+    file.copy(index.file.raw, index.file) # moving to another location to check that we handle different names for index/main file.
 
     wrapped <- FastaWrapper(comp, index=index.file)
     expect_output(show(wrapped), "index:")
@@ -70,9 +72,17 @@ test_that("FASTA wrapper with index works correctly without compression", {
 
 test_that("FASTA wrapper with index works correctly with compression", {
     comp <- Rsamtools::bgzip(fl, dest=tempfile(fileext=".fa.bgz"))
-    index.file <- Rsamtools::indexFa(comp)
 
-    wrapped <- FastaWrapper(comp, index=index.file)
+    index.file <- Rsamtools::indexFa(comp)
+    index.file.raw <- Rsamtools::indexFa(comp, format="fa")
+    index.file <- tempfile(fileext=".fai")
+    file.copy(index.file.raw, index.file) # moving to another location to check that we handle different names for index/main file.
+
+    gzindex.file.raw <- sub(".fai$", ".gzi", index.file.raw)
+    gzindex.file <- tempfile(fileext=".gzi")
+    file.copy(gzindex.file.raw, gzindex.file) # same logic as above.
+
+    wrapped <- FastaWrapper(comp, index=index.file, gzindex=gzindex.file)
     expect_output(show(wrapped), "index:")
     expect_s4_class(index(wrapped), "FaIndexWrapper")
 
@@ -80,7 +90,10 @@ test_that("FASTA wrapper with index works correctly with compression", {
     dir <- tempfile()
     info <- stageObject(wrapped, dir, "my_fa")
     invisible(.writeMetadata(info, dir))
-    expect_true("my_fa/index/file.fa.bgz.fai" %in% list.files(dir, recursive=TRUE))
+
+    listing <- list.files(dir, recursive=TRUE)
+    expect_true("my_fa/index/file.fa.bgz.fai" %in% listing)
+    expect_true("my_fa/gzindex/file.fa.bgz.gzi" %in% listing)
 
     # Loading it back again:
     meta <- acquireMetadata(dir, "my_fa/file.fa.bgz")

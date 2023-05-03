@@ -5,10 +5,17 @@
 \alias{FastaWrapper}
 \alias{FastaWrapper-class}
 \alias{stageObject,FastaWrapper-method}
+\alias{show,FastaWrapper-method}
 \alias{loadFastaWrapper}
 \title{Wrapper for a FASTA file}
 \usage{
-FastaWrapper(path, sequence.type = "DNA", compression = NULL, index = NULL)
+FastaWrapper(
+  path,
+  sequence.type = "DNA",
+  compression = NULL,
+  index = NULL,
+  gzindex = NULL
+)
 }
 \arguments{
 \item{path}{String containing the path to a FASTA file.}
@@ -19,8 +26,12 @@ FastaWrapper(path, sequence.type = "DNA", compression = NULL, index = NULL)
 This should be one of \code{"none"}, \code{"gzip"}, \code{"bzip2"} or \code{"bgzip"}.
 If \code{NULL}, this is inferred from the file's headers and suffix.}
 
-\item{index}{String specifying the path to an faidx file, or \code{NULL} if no index is available.
-If an index is supplied, the file should be uncompressed or bgzip-compressed.}
+\item{index}{String specifying the path to an FASTA index file, or \code{NULL} if no index is available.
+If an index is supplied, the file at \code{path} should be uncompressed or bgzip-compressed.}
+
+\item{gzindex}{String specifying the path to a bgzip index file, or \code{NULL} if no index is available.
+If an bgzip index is supplied, the file at \code{path} should be bgzip-compressed.
+This index is mandatory if \code{index} is supplied and \code{path} is bgzip-compressed.}
 }
 \value{
 A FastaWrapper instance that can be used in \code{\link{stageObject}}.

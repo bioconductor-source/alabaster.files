@@ -255,3 +255,6 @@ load_compressed_wrapper <- function(path, inner_meta, project, constructor, ...)
     .restoreMetadata(output, mcol.data=NULL, meta.data=inner_meta$other_data, project)
 }
 
+########################
+########################
+

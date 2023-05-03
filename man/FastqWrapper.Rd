@@ -5,6 +5,7 @@
 \alias{FastqWrapper}
 \alias{FastqWrapper-class}
 \alias{stageObject,FastqWrapper-method}
+\alias{show,FastqWrapper-method}
 \alias{loadFastqWrapper}
 \title{Wrapper for a FASTQ file}
 \usage{
@@ -13,7 +14,8 @@ FastqWrapper(
   encoding,
   sequence.type = "DNA",
   compression = NULL,
-  index = NULL
+  index = NULL,
+  gzindex = NULL
 )
 }
 \arguments{
@@ -30,6 +32,10 @@ If \code{NULL}, this is inferred from the file's headers and suffix.}
 
 \item{index}{String specifying the path to an faidx file, or \code{NULL} if no index is available.
 If an index is supplied, the file should be uncompressed or bgzip-compressed.}
+
+\item{gzindex}{String specifying the path to a bgzip index file, or \code{NULL} if no index is available.
+If an bgzip index is supplied, the file at \code{path} should be bgzip-compressed.
+This index is mandatory if \code{index} is supplied and \code{path} is bgzip-compressed.}
 }
 \value{
 A FastqWrapper instance that can be used in \code{\link{stageObject}}.

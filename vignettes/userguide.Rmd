@@ -3,7 +3,7 @@ title: Saving common bioinformatics file formats
 author:
 - name: Aaron Lun
   email: infinite.monkeys.with.keyboards@gmail.com
-package: alabaster.mae
+package: alabaster.files
 date: "Revised: May 2, 2023"
 output:
   BiocStyle::html_document

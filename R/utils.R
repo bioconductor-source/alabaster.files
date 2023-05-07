@@ -59,11 +59,12 @@ transfer_file <- function(src, dest) {
 
 read_first_few_lines <- function(x, compression, n=10, comment="") {
     handle <- switch(compression,
-        none=file(x),
-        bzip2=bzfile(x),
-        gzip=gzfile(x),
-        bgzip=gzfile(x)
+        none=file(x, open="rb"),
+        bzip2=bzfile(x, open="rb"),
+        gzip=gzfile(x, open="rb"),
+        bgzip=gzfile(x, open="rb")
     )
+    on.exit(close(handle))
 
     if (comment == "") {
         return(readLines(handle, n=n))

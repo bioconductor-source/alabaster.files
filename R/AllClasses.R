@@ -34,7 +34,8 @@ setClass("FaIndexWrapper", contains="Wrapper")
 #' @export
 setClass("BgzipIndexWrapper", contains="Wrapper")
 
-setClass("VcfWrapper", contains="CompressedIndexedWrapper")
+#' @export
+setClass("VcfWrapper", contains="CompressedIndexedWrapper", slots=c(header_only="logical"))
 
 setClass("GffWrapper", contains="CompressedIndexedWrapper", slots=c(format="character"))
 

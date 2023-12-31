@@ -1,5 +1,46 @@
 #' @export
 #' @import methods
+setClass("FileReference", contains="VIRTUAL", slots=c(path="character")) 
+
+#' @export
+setClass("BamFileReference", contains="FileReference", slots=c(index="character_OR_NULL"))
+
+#' @export
+setClass("BcfFileReference", contains="FileReference", slots=c(index="character_OR_NULL"))
+
+#' @export
+setClass("BigBedFileReference", contains="FileReference")
+
+#' @export
+setClass("BigWigFileReference", contains="FileReference")
+
+#' @export
+setClass("BedFileReference", contains="FileReference", slots=c(index="character_OR_NULL"))
+
+#' @export
+setClass("GffFileReference", contains="FileReference", slots=c(index="character_OR_NULL"))
+
+#' @export
+setClass("GmtFileReference", contains="FileReference")
+
+#' @export
+setClass("FastaFileReference", contains="FileReference", slots=c(seqtype="character", faindex="character_OR_NULL", gzindex="character_OR_NULL"))
+
+#' @export
+setClass("FastqFileReference", contains="FileReference", slots=c(
+    seqtype="character", 
+    qualtype="character", 
+    qualoffset="integer", 
+    faindex="character_OR_NULL", 
+    gzindex="character_OR_NULL")
+)
+
+###########################
+##### OLD STUFF HERE ######
+###########################
+
+#' @export
+#' @import methods
 #' @importClassesFrom S4Vectors Annotated
 setClass("Wrapper", contains=c("Annotated", "VIRTUAL"), slots=c(path="character"))
 

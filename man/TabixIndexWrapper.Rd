@@ -17,7 +17,7 @@ TabixIndexWrapper(path)
 A TabixIndexWrapper instance that can be used in \code{\link{stageObject}}.
 }
 \description{
-Wrap a Tabix file for saving and loading in the \pkg{alabaster} framework.
+This class is deprecated and only listed here for back-compatibility purposes.
 }
 \details{
 The TabixIndexWrapper class is a subclass of a \linkS4class{Wrapper},

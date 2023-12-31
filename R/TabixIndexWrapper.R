@@ -1,6 +1,6 @@
 #' Wrapper for a Tabix file
 #'
-#' Wrap a Tabix file for saving and loading in the \pkg{alabaster} framework.
+#' This class is deprecated and only listed here for back-compatibility purposes.
 #'
 #' @param path String containing the path to a Tabix file.
 #'

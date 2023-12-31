@@ -17,7 +17,7 @@ BgzipIndexWrapper(path)
 A BgzipIndexWrapper instance that can be used in \code{\link{stageObject}}.
 }
 \description{
-Wrap a Bgzip index file for saving and loading in the \pkg{alabaster} framework.
+This class is deprecated and only listed here for back-compatibility purposes.
 }
 \details{
 The BgzipIndexWrapper class is a subclass of a \linkS4class{Wrapper},

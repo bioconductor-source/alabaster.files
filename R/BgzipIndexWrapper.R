@@ -1,6 +1,6 @@
 #' Wrapper for a Bgzip index file
 #'
-#' Wrap a Bgzip index file for saving and loading in the \pkg{alabaster} framework.
+#' This class is deprecated and only listed here for back-compatibility purposes.
 #'
 #' @param path String containing the path to a Bgzip index file.
 #'

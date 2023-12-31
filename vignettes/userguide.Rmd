@@ -4,7 +4,7 @@ author:
 - name: Aaron Lun
   email: infinite.monkeys.with.keyboards@gmail.com
 package: alabaster.files
-date: "Revised: May 2, 2023"
+date: "Revised: December 30, 2023"
 output:
   BiocStyle::html_document
 vignette: >
@@ -15,7 +15,7 @@ vignette: >
 
 ```{r, echo=FALSE}
 library(BiocStyle)
-self <- Githubpkg("ArtifactDB/alabaster.files")
+self <- Biocpkg("alabaster.files")
 knitr::opts_chunk$set(error=FALSE, warning=FALSE, message=FALSE)
 ```
 
@@ -34,27 +34,25 @@ bam.file <- system.file("extdata", "ex1.bam", package="Rsamtools", mustWork=TRUE
 bam.index <- paste0(bam.file, ".bai")
 ```
 
-We can wrap this inside a `BamWrapper` class, which can be further decorated with arbitrary metadata:
+We can wrap this inside a `BamFileReference` class:
 
 ```{r}
 library(alabaster.files)
 library(S4Vectors)
-wrapped.bam <- BamWrapper(bam.file, index=bam.index)
-metadata(wrapped.bam) <- list(foo="bar")
+wrapped.bam <- BamFileReference(bam.file, index=bam.index)
 ```
 
-Then we can save it into an **alabaster** staging directory.
+Then we can save it to file:
 
 ```{r}
 dir <- tempfile()
-dir.create(dir)
-saveLocalObject(wrapped.bam, dir, path="my_bam")
+saveObject(wrapped.bam, dir)
 ```
 
 ... and load it back at some later time.
 
 ```{r}
-readLocalObject(dir, "my_bam")
+readObject(dir)
 ```
 
 # Integration with other objects
@@ -68,18 +66,17 @@ df <- DataFrame(Sample=LETTERS[1:4])
 # Adding a column of assorted wrapper files:
 df$File <- list(
     wrapped.bam,
-    BedWrapper(system.file("tests", "test.bed", package = "rtracklayer")),
-    BigBedWrapper(system.file("tests", "test.bb", package = "rtracklayer")),
-    GffWrapper(system.file("tests", "test.gtf", package = "rtracklayer"))
+    BigWigFileReference(system.file("tests", "test.bw", package = "rtracklayer")),
+    BigBedFileReference(system.file("tests", "test.bb", package = "rtracklayer")),
+    BcfFileReference(system.file("extdata", "ex1.bcf.gz", package = "Rsamtools"))
 )
 
 # Saving it all to the staging directory:
 dir <- tempfile()
-dir.create(dir)
-saveLocalObject(df, dir, path="stuff")
+saveObject(df, dir)
 
 # Now reading it back in:
-roundtrip <- readLocalObject(dir, "stuff")
+roundtrip <- readObject(dir)
 roundtrip$File
 ```
 
@@ -91,7 +88,7 @@ This avoids the need for a separate process to handle these files.
 `r self` will try to perform some cursory validation of the wrapped file to catch errors in user inputs.
 The level of validation is format-dependent but should be fast, e.g., BAM file validation is performed by scanning the header.
 In all cases, users should not expect an exhaustive check of file validity, as that would take too long and involve more parsing than desired for the scope of `r self`.
-If stricter validation is required, applications calling `r self` should override the `stageObject()` methods for the relevant `Wrapper` classes.
+If stricter validation is required, applications calling `r self` should override the `saveObject()` methods for the relevant `FileReference` classes.
 
 # Session information {-}
 

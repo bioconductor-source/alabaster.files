@@ -90,3 +90,25 @@ parse_magic_number <- function(bytes) {
     sum(as.double(bytes) * 256^(seq_along(bytes)-1))
 }
 
+transfer_index_file <- function(src, dest, extensions, format) {
+    for (suf in extensions) {
+        suf <- paste0(".", suf)
+        if (endsWith(src, suf)) {
+            transfer_file(src, paste0(dest, suf))
+            return(NULL)
+        }
+    }
+    stop("cannot determine ", format, " index type from its file extension")
+}
+
+choose_available_index <- function(path, extensions) {
+    index <- NULL
+    for (suffix in extensions) {
+        ipath <- paste0(path, ".", suffix)
+        if (file.exists(ipath)) {
+            index <- ipath
+            break
+        }
+    }
+    index
+}
